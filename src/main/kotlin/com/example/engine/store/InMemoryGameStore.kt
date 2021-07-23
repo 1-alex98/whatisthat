@@ -6,11 +6,6 @@ import io.ktor.application.*
 import io.ktor.sessions.*
 
 
-fun ApplicationCall.getGame(): Game?{
-    val session = sessions.get<GameSession>() ?: return null
-    return InMemoryGameStore.getGame(session.gameId)
-}
-
 
 object InMemoryGameStore: GameStore {
 
