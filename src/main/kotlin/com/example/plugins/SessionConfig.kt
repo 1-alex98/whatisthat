@@ -9,7 +9,7 @@ import io.ktor.routing.*
 
 fun Application.configureSession() {
     install(Sessions) {
-        cookie<GameSession>("LOGIN_SESSION", storage = SessionStorageMemory()){
+        cookie<GameSession>("GAME_SESSION", storage = SessionStorageMemory()){
             cookie.extensions["SameSite"] = "strict"
         }
     }

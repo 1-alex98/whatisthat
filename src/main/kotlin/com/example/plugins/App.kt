@@ -12,7 +12,7 @@ fun Application.servingApp() {
 
 
     routing {
-        // Static feature. Try to access `/static/index.html`
+        // One day will serve the react app
         static("/") {
             resources("static")
         }
