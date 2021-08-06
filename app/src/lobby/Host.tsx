@@ -3,6 +3,7 @@ import {Button, Form, Spinner} from "react-bootstrap";
 import {LobbyCommunicationService} from "../global/LobbyCommunicationService";
 import {useHistory} from "react-router-dom";
 import {History, LocationState} from "history";
+import {NotifyService} from "../global/NotifyService";
 
 function onSubmit(name: string, setLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void,
                   history: History<LocationState>){
@@ -10,12 +11,11 @@ function onSubmit(name: string, setLoading: (value: (((prevState: boolean) => bo
     LobbyCommunicationService.hostGame(name)
         .then(response => {
             setLoading(false)
-            history.push("/game")
+            history.push("/lobby")
         })
         .catch(reason => {
             setLoading(false)
-            alert("failed hosting")
-            console.error(reason)
+            NotifyService.warn(reason, "Could not host game")
         })
 }
 

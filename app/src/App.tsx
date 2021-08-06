@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import Host from "./lobby/Host";
 import Join from "./lobby/Join";
+import AlertErrors from "./AlterErrors";
+import Lobby from "./lobby/Lobby";
 
 function Status() {
   return null;
@@ -24,14 +26,18 @@ function App() {
           <Status/>
         </div>
       </nav>
+      <AlertErrors/>
       <Router>
         <div className="top-container">
           <Switch>
             <Route path="/host">
               <Host />
             </Route>
-            <Route path="/join">
+            <Route path="/join/:gameid">
               <Join />
+            </Route>
+            <Route path="/lobby">
+              <Lobby />
             </Route>
             <Route exact path="/">
               <Host />
