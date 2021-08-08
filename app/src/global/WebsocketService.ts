@@ -45,11 +45,12 @@ export namespace WebsocketService{
     }
 
     export function connect(){
-        let apiUrl = Environment.getApiUrl();
         let url = `ws://${window.location.host}/ws/listen`;
         if(ws){
             ws.onclose = null;
-            ws.close()
+            try {
+                ws.close()
+            } catch (ignored) {}
         }
         ws = new WebSocket(url)
         console.log(`Connecting ws to ${url}`)
@@ -78,5 +79,9 @@ export namespace WebsocketService{
 
     export function listenConnect(): Subject<boolean>{
         return connectedEventSubmitter
+    }
+
+    export function listenMessage(): Subject<WebsocketMessage>{
+        return websocketEventSubmitter
     }
 }

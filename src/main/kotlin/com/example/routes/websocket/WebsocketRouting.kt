@@ -39,6 +39,7 @@ fun Routing.websocket() {
         val (playerId, gameId) = getPlayerAndGameId()
         try {
             channel = addChannel(gameChannels, playerId, gameId)
+            setConnected(playerId, gameId)
             while (true){
                 val command = channel.receive()
                 outgoing.send(Frame.Text(Json.encodeToString(command)))
@@ -69,6 +70,7 @@ fun Routing.websocket() {
 }
 
 private fun removeChannel(channel: Channel<Message>, playerId: String, gameId: String) {
+    setDisconnected(playerId, gameId)
     val mutableMap = gameChannels[gameId]
     mutableMap?.remove(playerId)
     channel.close()
@@ -105,4 +107,12 @@ fun addChannel(
     val channel: Channel<Message> = Channel()
     listOfChannels[playerId] = channel
     return channel
+}
+
+fun setDisconnected(playerId: String, gameId: String) {
+
+}
+
+fun setConnected(playerId: String, gameId: String) {
+
 }

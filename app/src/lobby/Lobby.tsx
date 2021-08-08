@@ -4,7 +4,7 @@ import {LobbyCommunicationService, Player} from "../global/LobbyCommunicationSer
 import {NotifyService} from "../global/NotifyService";
 import copy from 'copy-to-clipboard';
 import "./Lobby.css"
-import {WebsocketService} from "../global/WebsocketService";
+import {MessageIdentifiers, WebsocketService} from "../global/WebsocketService";
 
 function copyUrlToClipBoard() {
     LobbyCommunicationService.gameId()
@@ -17,17 +17,28 @@ function copyUrlToClipBoard() {
 }
 
 
+function fetchPlayers(setPlayers: (value: (((prevState: Player[]) => Player[]) | Player[])) => void) {
+    LobbyCommunicationService.players()
+        .then(value => {
+            setPlayers(value)
+        })
+        .catch(reason => {
+            NotifyService.warn(reason, "Could not fetch players");
+        })
+}
+
 function Lobby(){
     let [players, setPlayers] = useState<Player[]>([]);
     useEffect(() => {
+        fetchPlayers(setPlayers);
         WebsocketService.connect()
-        LobbyCommunicationService.players()
-            .then(value => {
-                setPlayers(value)
-            })
-            .catch(reason => {
-                NotifyService.warn(reason, "Could not fetch players");
-            })
+        let subscription = WebsocketService.listenMessage()
+            .subscribe(message => {
+                if(message.identifier === MessageIdentifiers.PLAYERS_CHANGE.valueOf()) {
+                    fetchPlayers(setPlayers)
+                }
+            });
+        return () => subscription.unsubscribe()
     }, [])
     return (
         <div className="d-flex p-3 flex-column">
