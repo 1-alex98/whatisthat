@@ -34,42 +34,38 @@ val nextBytes = SecureRandom.getInstanceStrong().asKotlinRandom().nextBytes(300)
 
 fun Routing.websocket() {
 
-    route("api/listen") {
-
-        get("token"){
-            val session = call.sessions.get<GameSession>()
-            session?: throw BadRequestException("You need to be in a session")
-            val token = JWT.create()
-                .withAudience("WebsocketRouting")
-                .withIssuer("WebsocketRouting")
-                .withClaim("gameId", session.gameId)
-                .withClaim("playerId", session.playerId)
-                .withExpiresAt(Date(System.currentTimeMillis() + 30_000))
-                .sign(Algorithm.HMAC256(nextBytes))
-            call.respond(token)
-        }
-
-        webSocket("") {
-            var channel: Channel<Message>? = null
-            val (playerId, gameId) = getPlayerAndGameId()
-            try {
-                channel = addChannel(gameChannels, playerId, gameId)
-                while (true){
-                    val command = channel.receive()
-                    outgoing.send(Frame.Text(Json.encodeToString(command)))
-                }
-            } catch (e: Throwable) {
-                if (channel != null){
-                    if(!channel.isClosedForSend){
-                        outgoing.send(Frame.Text(e.message?:"unknown error"))
-                    }
-                    removeChannel(channel, playerId, gameId)
-                }
-                throw e
+    webSocket("/ws/listen") {
+        var channel: Channel<Message>? = null
+        val (playerId, gameId) = getPlayerAndGameId()
+        try {
+            channel = addChannel(gameChannels, playerId, gameId)
+            while (true){
+                val command = channel.receive()
+                outgoing.send(Frame.Text(Json.encodeToString(command)))
             }
+        } catch (e: Throwable) {
+            if (channel != null){
+                if(!channel.isClosedForSend){
+                    outgoing.send(Frame.Text(e.message?:"unknown error"))
+                }
+                removeChannel(channel, playerId, gameId)
+            }
+            throw e
         }
     }
 
+    get("/api/token"){
+        val session = call.sessions.get<GameSession>()
+        session?: throw BadRequestException("You need to be in a session")
+        val token = JWT.create()
+            .withAudience("WebsocketRouting")
+            .withIssuer("WebsocketRouting")
+            .withClaim("gameId", session.gameId)
+            .withClaim("playerId", session.playerId)
+            .withExpiresAt(Date(System.currentTimeMillis() + 30_000))
+            .sign(Algorithm.HMAC256(nextBytes))
+        call.respond(token)
+    }
 }
 
 private fun removeChannel(channel: Channel<Message>, playerId: String, gameId: String) {

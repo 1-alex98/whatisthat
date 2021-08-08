@@ -5,3 +5,18 @@
 .top-container {
   margin: 2rem;
 }
+
+.dot-app {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-app.red {
+  background-color: #ff0000;
+}
+
+.dot-app.green {
+  background-color: #73ff00;
+}

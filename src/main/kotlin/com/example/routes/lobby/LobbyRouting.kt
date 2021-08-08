@@ -73,7 +73,7 @@ private fun joinGame(
     hostRequest: JoinRequest
 ): String {
     val playerId = UUID.randomUUID().toString()
-    game.join(Player(hostRequest.playerName, playerId))
+    game.join(Player(hostRequest.playerName, playerId, host = false, connected = false))
     return playerId
 }
 
@@ -81,7 +81,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.createGame(): Pair<St
     val hostRequest = call.receive<HostRequest>()
     val gameId = UUID.randomUUID().toString()
     val playerId = UUID.randomUUID().toString()
-    val game = Game(gameId, Player(hostRequest.name, playerId))
+    val game = Game(gameId, Player(hostRequest.name, playerId, host = true, connected = false))
     GameStore.getInstance().save(game)
     return Pair(playerId, game)
 }

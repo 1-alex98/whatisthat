@@ -1,0 +1,14 @@
+.dot {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot.red {
+    background-color: #ff0000;
+}
+
+.dot.green {
+    background-color: #73ff00;
+}

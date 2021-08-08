@@ -8,12 +8,13 @@ function AlertErrors(): JSX.Element | null{
     const [level, setLevel] = useState("info");
     const [error, setError] = useState("");
     useEffect(() => {
-        NotifyService.subscribeToError()
+        let subscription = NotifyService.subscribeToError()
             .subscribe(value => {
                 setShow(true)
                 setError(value.message)
                 setLevel(value.level)
-            })
+            });
+        return () => subscription.unsubscribe()
     },[])
 
     if(show){

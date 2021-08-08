@@ -1,7 +1,9 @@
 import {Environment} from "./Environment";
 
 export interface Player {
-    name:string
+    name:string,
+    connected:boolean,
+    host:boolean,
 }
 
 export namespace LobbyCommunicationService{
@@ -52,6 +54,26 @@ export namespace LobbyCommunicationService{
             })
             .then(value => {
                 if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.text()
+            })
+    }
+    export function joinGame(name: string, gameId: string) {
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/lobby/join",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    playerName: name,
+                    gameId: gameId
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(value => {
+                if(value.status !== 201) {
                     throw value.text()
                 }
                 return value.text()

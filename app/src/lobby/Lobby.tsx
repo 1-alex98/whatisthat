@@ -1,12 +1,10 @@
 import {useEffect, useState} from "react";
-import {Button, Form, Spinner} from "react-bootstrap";
+import {Button, Card} from "react-bootstrap";
 import {LobbyCommunicationService, Player} from "../global/LobbyCommunicationService";
-import {useHistory} from "react-router-dom";
-import {History, LocationState} from "history";
 import {NotifyService} from "../global/NotifyService";
-import assert from "assert";
 import copy from 'copy-to-clipboard';
-
+import "./Lobby.css"
+import {WebsocketService} from "../global/WebsocketService";
 
 function copyUrlToClipBoard() {
     LobbyCommunicationService.gameId()
@@ -22,6 +20,7 @@ function copyUrlToClipBoard() {
 function Lobby(){
     let [players, setPlayers] = useState<Player[]>([]);
     useEffect(() => {
+        WebsocketService.connect()
         LobbyCommunicationService.players()
             .then(value => {
                 setPlayers(value)
@@ -38,9 +37,34 @@ function Lobby(){
                 </Button>
             </div>
             <div>
-                {JSON.stringify(players)}
+                <h3 className="mt-4">Players:</h3>
+                <div className="d-flex flex-wrap align-content-center justify-content-center">
+                    {
+                        players.map(value => playerCard(value))
+                    }
+                </div>
             </div>
         </div>
+    )
+}
+
+function playerCard(player:Player){
+    return (
+    <Card
+        bg={"light"}
+        key={player.name}
+        text={ 'dark'}
+        style={{ width: '18rem' }}
+        className="m-2"
+    >
+        <Card.Body>
+            <Card.Title>{player.name}</Card.Title>
+            <p style={{display: "inline"}}>
+                Connected:
+            </p>
+            <div className={"dot ms-2 " + (player.connected?"green": "red")} />
+        </Card.Body>
+    </Card>
     )
 }
 
