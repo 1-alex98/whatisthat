@@ -5,7 +5,7 @@ import com.example.engine.game.Player
 import com.example.engine.store.GameStore
 import com.example.engine.store.getGame
 import com.example.routes.websocket.SocketService
-import com.example.routes.websocket.message.PlayerJoined
+import com.example.routes.websocket.message.PlayersChanged
 import com.example.session.GameSession
 import io.ktor.application.*
 import io.ktor.features.*
@@ -63,7 +63,7 @@ fun Routing.lobby() {
             val playerId = joinGame(game, hostRequest)
             call.sessions.set(GameSession(playerId, game.id))
             call.response.status(HttpStatusCode.Created)
-            SocketService.sendToAllInGame(game.id, PlayerJoined())
+            SocketService.sendToAllInGame(game.id, PlayersChanged())
         }
     }
 }

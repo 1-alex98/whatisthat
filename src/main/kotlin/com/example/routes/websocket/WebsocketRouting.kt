@@ -2,7 +2,10 @@ package com.example.routes.websocket
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.engine.store.GameStore
+import com.example.routes.websocket.SocketService.sendToAllInGame
 import com.example.routes.websocket.message.Message
+import com.example.routes.websocket.message.PlayersChanged
 import com.example.session.GameSession
 import io.ktor.application.*
 import io.ktor.features.*
@@ -30,7 +33,7 @@ object SocketService{
         }
     }
 }
-val nextBytes = SecureRandom.getInstanceStrong().asKotlinRandom().nextBytes(300)
+val secreteSigningBytes = SecureRandom.getInstanceStrong().asKotlinRandom().nextBytes(300)
 
 fun Routing.websocket() {
 
@@ -64,12 +67,12 @@ fun Routing.websocket() {
             .withClaim("gameId", session.gameId)
             .withClaim("playerId", session.playerId)
             .withExpiresAt(Date(System.currentTimeMillis() + 30_000))
-            .sign(Algorithm.HMAC256(nextBytes))
+            .sign(Algorithm.HMAC256(secreteSigningBytes))
         call.respond(token)
     }
 }
 
-private fun removeChannel(channel: Channel<Message>, playerId: String, gameId: String) {
+private suspend fun removeChannel(channel: Channel<Message>, playerId: String, gameId: String) {
     setDisconnected(playerId, gameId)
     val mutableMap = gameChannels[gameId]
     mutableMap?.remove(playerId)
@@ -82,7 +85,7 @@ private suspend fun DefaultWebSocketServerSession.getPlayerAndGameId() :  Pair<S
         receive as Frame.Text
         val readText = receive.readText()
         val build = JWT
-            .require(Algorithm.HMAC256(nextBytes))
+            .require(Algorithm.HMAC256(secreteSigningBytes))
             .withAudience("WebsocketRouting")
             .withIssuer("WebsocketRouting")
             .build()
@@ -94,7 +97,7 @@ private suspend fun DefaultWebSocketServerSession.getPlayerAndGameId() :  Pair<S
     }
 }
 
-fun addChannel(
+private fun addChannel(
     gameChannels: MutableMap<String, MutableMap<String, Channel<Message>>>,
     playerId: String,
     gameId: String,
@@ -104,15 +107,21 @@ fun addChannel(
         gameChannels.put(gameId, value)
         value
     }()
-    val channel: Channel<Message> = Channel()
+    val channel: Channel<Message> = Channel(10)
     listOfChannels[playerId] = channel
     return channel
 }
 
-fun setDisconnected(playerId: String, gameId: String) {
-
+private suspend fun setDisconnected(playerId: String, gameId: String) {
+    //val game = GameStore.getInstance().getGame(gameId)
+    //game?: return
+    //game.playerList.find { it.id == playerId }?.connected = false
+    //sendToAllInGame(gameId, PlayersChanged())
 }
 
-fun setConnected(playerId: String, gameId: String) {
-
+private suspend fun setConnected(playerId: String, gameId: String) {
+    val game = GameStore.getInstance().getGame(gameId)
+    game?: throw IllegalStateException("The game you are trying to register to does not exist")
+    game.playerList.find { it.id == playerId }?.connected = true
+    sendToAllInGame(gameId, PlayersChanged())
 }
