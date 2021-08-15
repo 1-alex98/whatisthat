@@ -5,10 +5,7 @@ import {NotifyService} from "../global/NotifyService";
 import copy from 'copy-to-clipboard';
 import "./Lobby.css"
 import {MessageIdentifiers, WebsocketService} from "../global/WebsocketService";
-
-interface SettingsObject {
-    rounds: number
-}
+import {useHistory} from "react-router-dom";
 
 function copyUrlToClipBoard() {
     LobbyCommunicationService.gameId()
@@ -42,7 +39,8 @@ function fetchIsHost(setHost: (value: (((prevState: boolean) => boolean) | boole
 }
 
 function startGame(rounds: number) {
-    
+    LobbyCommunicationService.start(rounds)
+        .catch(reason => NotifyService.warn(reason, "Game could not be started"))
 }
 
 function Settings() {
@@ -81,6 +79,7 @@ function Settings() {
 
 function Lobby(){
     let [players, setPlayers] = useState<Player[]>([]);
+    let history = useHistory();
     useEffect(() => {
         fetchPlayers(setPlayers);
         WebsocketService.connect()
@@ -89,9 +88,13 @@ function Lobby(){
                 if(message.identifier === MessageIdentifiers.PLAYERS_CHANGE.valueOf()) {
                     fetchPlayers(setPlayers)
                 }
+                if(message.identifier === MessageIdentifiers.GAME_STATE_CHANGED.valueOf()
+                    && message.message === "EXPLAIN"){
+                    history.push("/explain")
+                }
             });
         return () => subscription.unsubscribe()
-    }, [])
+    }, [history])
     return (
         <div className="d-flex p-3 flex-column">
             <div>

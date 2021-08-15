@@ -96,4 +96,24 @@ export namespace LobbyCommunicationService{
                 return value.json()
             })
     }
+
+    export function start(rounds: number) : Promise<void>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/lobby/start",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    rounds: rounds
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+            })
+    }
 }

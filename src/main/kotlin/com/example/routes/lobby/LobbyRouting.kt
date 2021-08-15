@@ -1,14 +1,19 @@
 package com.example.routes.lobby
 
 import com.example.engine.game.Game
+import com.example.engine.game.GameSettings
 import com.example.engine.game.Player
 import com.example.engine.store.GameStore
 import com.example.engine.store.getGame
+import com.example.routes.CustomStatusCodeException
 import com.example.routes.websocket.SocketService
+import com.example.routes.websocket.message.GameStateChanged
 import com.example.routes.websocket.message.PlayersChanged
 import com.example.session.GameSession
 import com.example.session.getPlayerId
+import com.example.session.isHost
 import io.ktor.application.*
+import io.ktor.client.features.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
@@ -67,14 +72,35 @@ fun Routing.lobby() {
                 throw BadRequestException("Leave the old game before joining a new one")
             }
             val game = GameStore.getInstance().getGame(hostRequest.gameId)
-            game ?: run {
+            if(game == null) {
                 call.respond(HttpStatusCode.NotFound, "No such game was found")
+                return@post
+            }
+            if(game.state != Game.State.WAITING_TO_START){
+                call.respond(HttpStatusCode.BadRequest, "Game is a state that it can not be joined any longer")
                 return@post
             }
             val playerId = joinGame(game, hostRequest)
             call.sessions.set(GameSession(playerId, game.id))
             call.response.status(HttpStatusCode.Created)
             SocketService.sendToAllInGame(game.id, PlayersChanged())
+        }
+
+        post("start") {
+            val host = call.isHost()
+            if(host == null || !host){
+                throw CustomStatusCodeException(403)
+            }
+            val game = call.getGame()
+            game?: throw IllegalStateException()
+            val startRequest = call.receive<StartRequest>()
+            game.settings = GameSettings(startRequest.rounds)
+            game.state = Game.State.EXPLAIN
+            game.reset()
+            game.assignRoles()
+            SocketService.sendToAllInGame(game.id, PlayersChanged())
+            SocketService.sendToAllInGame(game.id, GameStateChanged(Game.State.EXPLAIN.name))
+            call.respond(HttpStatusCode.OK, "started")
         }
     }
 }

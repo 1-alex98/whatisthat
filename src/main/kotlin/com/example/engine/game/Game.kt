@@ -5,6 +5,7 @@ import io.ktor.features.*
 class Game(val id: String, val host: Player){
     private val _playerList: MutableList<Player> = ArrayList()
     var state: State = State.WAITING_TO_START
+    var settings: GameSettings? = null
     val playerList:List<Player>
         get() = _playerList.toList()
 
@@ -35,7 +36,18 @@ class Game(val id: String, val host: Player){
         return id.hashCode()
     }
 
+    fun assignRoles() {
+        playerList.forEach { it.role = "crewmate"}
+        playerList.random().role = "alien"
+    }
+
+    fun reset() {
+        playerList.forEach{ it.ready = false}
+        _playerList.removeIf{ !it.connected }
+    }
+
     enum class State {
-        WAITING_TO_START
+        WAITING_TO_START,
+        EXPLAIN
     }
 }

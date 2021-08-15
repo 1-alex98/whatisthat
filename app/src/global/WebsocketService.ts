@@ -3,7 +3,8 @@ import {Subject} from "rxjs";
 import {NotifyService} from "./NotifyService";
 
 export enum MessageIdentifiers {
-    PLAYERS_CHANGE = 1
+    PLAYERS_CHANGE = 1,
+    GAME_STATE_CHANGED = 2
 }
 
 export interface WebsocketMessage {
@@ -71,7 +72,7 @@ export namespace WebsocketService{
         ws = new WebSocket(url)
         console.log(`Connecting ws to ${url}`)
         ws.onopen = _ => {
-            if(!ws.connected){
+            if(ws.readyState === ws.CONNECTING){
                 return;
             }
             getWebsocketToken()
