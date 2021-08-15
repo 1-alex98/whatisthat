@@ -16,3 +16,7 @@
 .settings-div {
     display: flex;
 }
+
+.host-name {
+    text-decoration: underline;
+}

@@ -1,0 +1,10 @@
+id: city
+name: city
+options:
+  - Berlin
+  - Paris
+  - London
+  - Venice
+  - Rome
+  - Madrid
+  - Washington

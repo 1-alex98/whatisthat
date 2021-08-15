@@ -5,6 +5,7 @@ export interface Player {
     name:string,
     connected:boolean,
     host:boolean,
+    me:boolean,
 }
 
 export namespace LobbyCommunicationService{

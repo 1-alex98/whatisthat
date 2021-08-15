@@ -1,0 +1,8 @@
+id: take-vehicle
+name: takes a vehicle
+options:
+  - takes a rocket
+  - takes the train
+  - takes a taxi
+  - takes a plane
+  - drives in a car

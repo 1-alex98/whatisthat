@@ -137,6 +137,7 @@ private suspend fun setDisconnected(playerId: String, gameId: String) {
     val game = GameStore.getInstance().getGame(gameId)
     game?: return
     game.playerList.find { it.id == playerId }?.connected = false
+    game.playerList.find { it.id == playerId }?.ready = false
     sendToAllInGame(gameId, PlayersChanged())
 }
 

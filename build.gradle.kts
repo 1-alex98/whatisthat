@@ -27,6 +27,7 @@ dependencies {
     implementation("io.ktor:ktor-websockets:$ktor_version")
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("com.amihaiemil.web:eo-yaml:5.2.1")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }

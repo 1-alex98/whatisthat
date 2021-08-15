@@ -1,5 +1,7 @@
 package com.example
 
+import com.example.engine.sentencegeneration.SentenceGenerator
+import com.example.engine.sentencegeneration.TemplateStore
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
@@ -16,7 +18,12 @@ fun main() {
         routing()
         servingApp()
         statusPage()
+        initSentenceParsing()
     }.start(wait = true)
+}
+
+private fun initSentenceParsing() {
+    SentenceGenerator.load()
 }
 
 

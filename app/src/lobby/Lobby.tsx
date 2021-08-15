@@ -125,7 +125,7 @@ function playerCard(player:Player){
         className="m-2"
     >
         <Card.Body>
-            <Card.Title>{player.name}</Card.Title>
+            <Card.Title><p ><span className={player.host?"host-name":""}>{player.name}</span>{player.me? " (me)":""}</p></Card.Title>
             <p style={{display: "inline"}}>
                 Connected:
             </p>

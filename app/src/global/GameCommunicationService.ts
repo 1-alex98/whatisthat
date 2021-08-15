@@ -29,4 +29,30 @@ export namespace GameCommunicationService{
                 return value.text()
             })
     }
+    export function ready(): Promise<void>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/ready",
+            {
+                method: "Post"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return
+            })
+    }
+    export function missingReady(): Promise<string[]>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/ready-missing",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
+            })
+    }
 }

@@ -1,0 +1,10 @@
+id: farm-animal
+name: farm animal
+options:
+  - cat
+  - dog
+  - cow
+  - horse
+  - pig
+  - donkey
+  - chicken

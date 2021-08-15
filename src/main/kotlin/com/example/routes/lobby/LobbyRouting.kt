@@ -55,7 +55,7 @@ fun Routing.lobby() {
         get("players") {
             val game = call.getGame()
             game ?: throw BadRequestException("Not in a game")
-            val players = game.playerList.map { PlayerAnswer(it) }
+            val players = game.playerList.map { PlayerAnswer(it, call.getPlayerId()!!) }
             call.respond(players)
         }
 

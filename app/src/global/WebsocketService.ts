@@ -4,7 +4,8 @@ import {NotifyService} from "./NotifyService";
 
 export enum MessageIdentifiers {
     PLAYERS_CHANGE = 1,
-    GAME_STATE_CHANGED = 2
+    GAME_STATE_CHANGED = 2,
+    PLAYER_READY_CHANGED = 3
 }
 
 export interface WebsocketMessage {

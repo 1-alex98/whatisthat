@@ -37,7 +37,7 @@ function App() {
               <Main/>
             </Route>
             <Route path="*">
-              <p>404 we can not find what you are looking for</p>
+              <p><span className="text-danger">404</span> we can not find what you are looking for.<br/> Somebody that does not know what he is doing must have coded this site.</p>
             </Route>
           </Switch>
         </div>

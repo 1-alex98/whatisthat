@@ -1,0 +1,9 @@
+id: ball-sport
+name: ball-sport
+options:
+  - basketball
+  - football
+  - table tennis
+  - tennis
+  - handball
+  - volleyball

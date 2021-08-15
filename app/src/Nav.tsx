@@ -15,6 +15,12 @@ function redirectCorrectPage(state: string, history: History<LocationState>) {
         case "WAITING_TO_START":
             history.push("/lobby")
             break;
+        case "EXPLAIN":
+            history.push("/explain")
+            break;
+        case "DRAW":
+            history.push("/draw")
+            break;
     }
 }
 
