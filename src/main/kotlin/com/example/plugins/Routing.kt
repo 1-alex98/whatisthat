@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.routes.global.global
 import com.example.routes.lobby.lobby
 import com.example.routes.websocket.websocket
 import io.ktor.routing.*
@@ -9,5 +10,6 @@ fun Application.routing() {
     routing {
         lobby()
         websocket()
+        global()
     }
 }
