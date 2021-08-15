@@ -1,5 +1,6 @@
 import {Environment} from "./Environment";
 
+
 export interface Player {
     name:string,
     connected:boolean,
@@ -43,6 +44,7 @@ export namespace LobbyCommunicationService{
                 return value.json()
             })
     }
+
     export function gameId(): Promise<string>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/lobby/invite-id",
@@ -59,6 +61,7 @@ export namespace LobbyCommunicationService{
                 return value.text()
             })
     }
+
     export function joinGame(name: string, gameId: string) {
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/lobby/join",
@@ -77,6 +80,20 @@ export namespace LobbyCommunicationService{
                     throw value.text()
                 }
                 return value.text()
+            })
+    }
+
+    export function isHost() : Promise<boolean>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/lobby/host",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
             })
     }
 }

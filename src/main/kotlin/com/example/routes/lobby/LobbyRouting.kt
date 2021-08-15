@@ -7,6 +7,7 @@ import com.example.engine.store.getGame
 import com.example.routes.websocket.SocketService
 import com.example.routes.websocket.message.PlayersChanged
 import com.example.session.GameSession
+import com.example.session.getPlayerId
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -25,6 +26,16 @@ fun Routing.lobby() {
         get("in-a-game") {
             val game = call.getGame()
             call.respond(game != null)
+        }
+
+        get("host") {
+            val game = call.getGame()
+            game ?: throw NotFoundException()
+
+            val playerId = call.getPlayerId()
+            playerId ?: throw NotFoundException()
+
+            call.respond(game.host.id == playerId)
         }
 
         get("invite-id") {

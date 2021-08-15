@@ -11,6 +11,18 @@ export interface WebsocketMessage {
     message: string;
 }
 
+class AsyncLock {
+    public disable: () => void;
+    public promise: Promise<void>;
+    constructor () {
+        this.disable = () => {}
+        this.promise = Promise.resolve()
+    }
+
+    enable () {
+        this.promise = new Promise(resolve => this.disable = resolve)
+    }
+}
 
 function getWebsocketToken() :Promise<string>{
     let apiUrl = Environment.getApiUrl();
@@ -31,9 +43,10 @@ function getWebsocketToken() :Promise<string>{
 
 export namespace WebsocketService{
     const websocketEventSubmitter = new Subject<WebsocketMessage>()
+    const lock = new AsyncLock()
     const connectedEventSubmitter = new Subject<boolean>()
     let connectedState = false;
-    var ws: WebSocket;
+    let ws: WebSocket;
 
     function setConnected(connected: boolean) {
         connectedEventSubmitter.next(connected);
@@ -44,10 +57,13 @@ export namespace WebsocketService{
         return connectedState
     }
 
-    export function connect(){
+    export async function connect(){
+        await lock.promise
+        lock.enable()
         let url = `ws://${window.location.host}/ws/listen`;
         if(ws){
             ws.onclose = null;
+            ws.onopen = null;
             try {
                 ws.close()
             } catch (ignored) {}
@@ -55,6 +71,9 @@ export namespace WebsocketService{
         ws = new WebSocket(url)
         console.log(`Connecting ws to ${url}`)
         ws.onopen = _ => {
+            if(!ws.connected){
+                return;
+            }
             getWebsocketToken()
                 .then(value => ws.send(value))
             setConnected(true);
@@ -75,6 +94,7 @@ export namespace WebsocketService{
             let message = JSON.parse(data) as WebsocketMessage;
             websocketEventSubmitter.next(message)
         }
+        lock.disable()
     }
 
     export function listenConnect(): Subject<boolean>{

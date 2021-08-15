@@ -1,10 +1,14 @@
 import {useEffect, useState} from "react";
-import {Button, Card} from "react-bootstrap";
+import {Button, Card, Form} from "react-bootstrap";
 import {LobbyCommunicationService, Player} from "../global/LobbyCommunicationService";
 import {NotifyService} from "../global/NotifyService";
 import copy from 'copy-to-clipboard';
 import "./Lobby.css"
 import {MessageIdentifiers, WebsocketService} from "../global/WebsocketService";
+
+interface SettingsObject {
+    rounds: number
+}
 
 function copyUrlToClipBoard() {
     LobbyCommunicationService.gameId()
@@ -25,6 +29,54 @@ function fetchPlayers(setPlayers: (value: (((prevState: Player[]) => Player[]) |
         .catch(reason => {
             NotifyService.warn(reason, "Could not fetch players");
         })
+}
+
+function fetchIsHost(setHost: (value: (((prevState: boolean) => boolean) | boolean)) => void) {
+    LobbyCommunicationService.isHost()
+        .then(value => {
+            setHost(value)
+        })
+        .catch(reason => {
+            NotifyService.warn(reason, "Could not fetch if you are host");
+        })
+}
+
+function startGame(rounds: number) {
+    
+}
+
+function Settings() {
+    let [host, setHost] = useState(false);
+    let [rounds, setRounds] = useState(6);
+    useEffect(() => {
+        fetchIsHost(setHost)
+    },[])
+
+
+    return (<div className="m-2 flex-column align-items-center settings-div" hidden={!host}>
+        <Card
+            bg={"light"}
+            key="settings"
+            text={'dark'}
+            style={{width: '18rem'}}
+            className="m-2">
+            <Card.Title>
+                <div className="m-2">
+                    <i className="fas fa-cog"/> Settings
+                </div>
+            </Card.Title>
+            <Card.Body>
+
+                <Form>
+                    <Form.Label>Rounds:{rounds}</Form.Label>
+                    <Form.Range min={2} max={10} defaultValue={6} onChange={event => setRounds(Number(event.target.value))}/>
+                </Form>
+            </Card.Body>
+        </Card>
+        <Button variant="primary" onClick={event=> startGame(rounds)}>
+            Start game
+        </Button>
+    </div>);
 }
 
 function Lobby(){
@@ -55,6 +107,7 @@ function Lobby(){
                     }
                 </div>
             </div>
+            <Settings/>
         </div>
     )
 }

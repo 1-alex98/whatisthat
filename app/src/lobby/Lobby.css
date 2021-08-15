@@ -12,3 +12,7 @@
 .dot.green {
     background-color: #73ff00;
 }
+
+.settings-div {
+    display: flex;
+}

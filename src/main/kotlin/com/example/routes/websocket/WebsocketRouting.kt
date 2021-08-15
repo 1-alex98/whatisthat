@@ -14,7 +14,11 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.security.SecureRandom
@@ -35,6 +39,7 @@ object SocketService{
 }
 val secreteSigningBytes = SecureRandom.getInstanceStrong().asKotlinRandom().nextBytes(300)
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun Routing.websocket() {
 
     webSocket("/ws/listen") {
@@ -42,18 +47,20 @@ fun Routing.websocket() {
         val (playerId, gameId) = getPlayerAndGameId()
         try {
             channel = addChannel(gameChannels, playerId, gameId)
+            outgoing.invokeOnClose {
+                runBlocking {
+                    launch(Dispatchers.Default){
+                        onClose(channel, it, playerId, gameId)
+                    }
+                }
+            }
             setConnected(playerId, gameId)
             while (true){
                 val command = channel.receive()
                 outgoing.send(Frame.Text(Json.encodeToString(command)))
             }
         } catch (e: Throwable) {
-            if (channel != null){
-                if(!channel.isClosedForSend){
-                    outgoing.send(Frame.Text(e.message?:"unknown error"))
-                }
-                removeChannel(channel, playerId, gameId)
-            }
+            onClose(channel, e, playerId, gameId)
             throw e
         }
     }
@@ -69,6 +76,20 @@ fun Routing.websocket() {
             .withExpiresAt(Date(System.currentTimeMillis() + 30_000))
             .sign(Algorithm.HMAC256(secreteSigningBytes))
         call.respond(token)
+    }
+}
+
+private suspend fun DefaultWebSocketServerSession.onClose(
+    channel: Channel<Message>?,
+    e: Throwable?,
+    playerId: String,
+    gameId: String
+) {
+    if (channel != null) {
+        if (!outgoing.isClosedForSend) {
+            outgoing.send(Frame.Text(e?.message ?: "unknown error"))
+        }
+        removeChannel(channel, playerId, gameId)
     }
 }
 
@@ -113,10 +134,10 @@ private fun addChannel(
 }
 
 private suspend fun setDisconnected(playerId: String, gameId: String) {
-    //val game = GameStore.getInstance().getGame(gameId)
-    //game?: return
-    //game.playerList.find { it.id == playerId }?.connected = false
-    //sendToAllInGame(gameId, PlayersChanged())
+    val game = GameStore.getInstance().getGame(gameId)
+    game?: return
+    game.playerList.find { it.id == playerId }?.connected = false
+    sendToAllInGame(gameId, PlayersChanged())
 }
 
 private suspend fun setConnected(playerId: String, gameId: String) {
