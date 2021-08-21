@@ -72,7 +72,7 @@ function Settings() {
             </Card.Body>
         </Card>
         <Button variant="primary" onClick={event=> startGame(rounds)}>
-            Start game
+            <i className="fas fa-play"/> Start game
         </Button>
     </div>);
 }
@@ -99,6 +99,7 @@ function Lobby(){
         <div className="d-flex p-3 flex-column">
             <div>
                 <Button variant="primary" onClick={event => copyUrlToClipBoard()}>
+                    <i className="fas fa-copy"/>
                     Copy invite url
                 </Button>
             </div>

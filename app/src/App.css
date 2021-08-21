@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  height: 100%;
 }
 
 .top-container {
@@ -19,4 +20,12 @@
 
 .dot-app.green {
   background-color: #73ff00;
+}
+
+html, body {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }

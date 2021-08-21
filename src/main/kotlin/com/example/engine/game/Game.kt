@@ -62,7 +62,8 @@ class Game(val id: String, val host: Player){
         SocketService.sendToAllInGame(id, GameStateChanged(State.DRAW.name))
     }
 
-    fun newRound(){
+    private fun newRound(){
+        playerList.forEach {it.ready=false}
         rounds.add(Round(rounds.size+1, SentenceGenerator.generate()))
     }
 

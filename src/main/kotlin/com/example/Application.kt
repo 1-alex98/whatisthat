@@ -16,7 +16,6 @@ fun main() {
         configureWebsockets()
         configureSession()
         routing()
-        servingApp()
         statusPage()
         initSentenceParsing()
     }.start(wait = true)

@@ -7,7 +7,8 @@ object SentenceGenerator {
     val store: TemplateStore = TemplateStore
 
     fun generate() : Sentence{
-        TODO()
+        val randomTemplate = store.randomTemplate()
+        return Sentence(randomTemplate)
     }
 
     fun load() {

@@ -10,12 +10,12 @@ import kotlin.io.path.listDirectoryEntries
 
 
 object TemplateStore {
-    private val sentences: Set<Template>
+    private val templates: Set<Template>
     private val blocks: Set<Block>
 
     init {
         blocks = parseBlocks()
-        sentences = parseSentences()
+        templates = parseTemplates()
     }
 
     private fun parseBlocks(): Set<Block> {
@@ -37,7 +37,7 @@ object TemplateStore {
         return Block(id, name, options.map { it.asScalar().value() }.toSet())
     }
 
-    private fun parseSentences(): Set<Template> {
+    private fun parseTemplates(): Set<Template> {
         val templates = mutableSetOf<Template>()
         val resource: URL = Game::class.java.classLoader.getResource("sentences/sentences.yml")!!
         val createYamlInput = Yaml.createYamlInput(File(resource.toURI()))
@@ -45,13 +45,14 @@ object TemplateStore {
         val yamlSequence = readYamlMapping.yamlSequence("sentences")
         yamlSequence.map {
             val raw = it.asScalar().value()
-            templates.add(parseSentence(raw))
+            templates.add(Template(raw, blocks))
         }
         return templates
     }
 
-    private fun parseSentence(raw: String): Template {
-        TODO("Not yet implemented")
+    fun randomTemplate(): Template {
+        return templates.random()
     }
+
 
 }

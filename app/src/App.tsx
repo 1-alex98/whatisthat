@@ -11,18 +11,22 @@ import Lobby from "./lobby/Lobby";
 import Nav from "./Nav";
 import Explain from "./game/Explain";
 import Main from './Main';
+import Draw from "./game/Draw";
 
 
 function App() {
   return (
-    <div className="App">
+    <div className="App d-flex flex-column">
       <Nav/>
       <AlertErrors/>
       <Router>
-        <div className="top-container">
+        <div className="top-container flex-grow-1">
           <Switch>
             <Route path="/host">
               <Host/>
+            </Route>
+            <Route path="/draw">
+              <Draw/>
             </Route>
             <Route path="/explain">
               <Explain/>

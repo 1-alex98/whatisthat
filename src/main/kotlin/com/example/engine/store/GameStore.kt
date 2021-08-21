@@ -18,10 +18,15 @@ fun ApplicationCall.getExistingGame(): Game{
     val session = sessions.get<GameSession>() ?: throw NotFoundException()
     return GameStore.getInstance().getGame(session.gameId)?: throw NotFoundException()
 }
+
 fun ApplicationCall.getExistingPlayer(): Player{
     val existingGame = getExistingGame()
     val playerId = getExistingPlayerId()
     return existingGame.playerList.find { it.id == playerId } ?: throw NotFoundException()
+}
+
+fun ApplicationCall.isAlien(): Boolean{
+    return getExistingPlayer().role != "alien"
 }
 
 interface GameStore {
