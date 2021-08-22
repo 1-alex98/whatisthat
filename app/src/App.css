@@ -7,6 +7,10 @@
   margin: 2rem;
 }
 
+.clickable {
+  cursor:pointer;
+}
+
 .dot-app {
   height: 15px;
   width: 15px;

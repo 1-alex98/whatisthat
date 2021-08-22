@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {WebsocketService} from "./global/WebsocketService";
-import {History, LocationState} from "history";
+import {History} from "history";
 import {GlobalCommunicationService} from "./global/GlobalCommunicationService";
+import {NotifyService} from "./global/NotifyService";
 
 function fetchGameState(): Promise<string> {
     return GlobalCommunicationService.gameState();
 }
 
-function redirectCorrectPage(state: string, history: History<LocationState>) {
+function redirectCorrectPage(state: string, history: History) {
     switch (state) {
         case "":
             break;
@@ -21,10 +22,13 @@ function redirectCorrectPage(state: string, history: History<LocationState>) {
         case "DRAW":
             history.push("/draw")
             break;
+        case "REVIEW":
+            history.push("/review")
+            break;
     }
 }
 
-function reconnect(history: History<LocationState>) {
+function reconnect(history: History) {
     fetchGameState()
         .then(state=> {
             if(state) {
@@ -33,6 +37,13 @@ function reconnect(history: History<LocationState>) {
             redirectCorrectPage(state, history)
         })
         .catch(_ => {})
+}
+
+function quit(history: History) {
+    WebsocketService.quit()
+    GlobalCommunicationService.quit()
+        .then(_ => history.push("/"))
+        .catch(err=> NotifyService.warn(err, "Could not quit"))
 }
 
 function Nav() {
@@ -59,6 +70,7 @@ function Nav() {
             <div>
                 <p className="d-inline">Connected: </p>
                 <div className={"dot-app "+ (connected?"green": "red")}/>
+                <i hidden={!connected} className="fas fa-sign-out-alt m-3 clickable" onClick={_ => quit(history)}/>
             </div>
         </div>
     </nav>;

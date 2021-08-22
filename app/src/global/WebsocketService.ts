@@ -59,16 +59,21 @@ export namespace WebsocketService{
         return connectedState
     }
 
+    export function quit(){
+        ws.onclose = null;
+        ws.onopen = null;
+        try {
+            ws.close()
+        } catch (ignored) {}
+        setConnected(false)
+    }
+
     export async function connect(){
         await lock.promise
         lock.enable()
         let url = `ws://${window.location.host}/ws/listen`;
         if(ws){
-            ws.onclose = null;
-            ws.onopen = null;
-            try {
-                ws.close()
-            } catch (ignored) {}
+            quit()
         }
         ws = new WebSocket(url)
         console.log(`Connecting ws to ${url}`)

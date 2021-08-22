@@ -1,5 +1,6 @@
 import {Environment} from "./Environment";
 
+
 export interface AlienSentence {
     raw: string;
     optionsName: string;
@@ -32,6 +33,20 @@ export namespace GameCommunicationService{
                     throw value.text()
                 }
                 return value.text()
+            })
+    }
+
+    export function getDrawTime(): Promise<number>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/draw-time",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
             })
     }
     export function ready(): Promise<void>{
@@ -87,6 +102,40 @@ export namespace GameCommunicationService{
                     throw value.text()
                 }
                 return value.json()
+            })
+    }
+
+    export function getUploadMissing(): Promise<string[]>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/uploadMissing",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
+            })
+    }
+
+    export function uploadImage(dataURL: string | undefined) : Promise<void> {
+        if(!dataURL){
+            throw new Error("Data url needs to be present")
+        }
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/upload-image",
+            {
+                method: "POST",
+                body: dataURL,
+                headers: {
+                    "Content-Type": "application/text"
+                }
+            })
+            .then(value => {
+                if(value.status !== 201) {
+                    throw value.text()
+                }
             })
     }
 }

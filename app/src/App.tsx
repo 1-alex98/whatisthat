@@ -17,9 +17,9 @@ import Draw from "./game/Draw";
 function App() {
   return (
     <div className="App d-flex flex-column">
-      <Nav/>
-      <AlertErrors/>
       <Router>
+        <Nav/>
+        <AlertErrors/>
         <div className="top-container flex-grow-1">
           <Switch>
             <Route path="/host">

@@ -30,5 +30,10 @@ fun Routing.global() {
             }
             call.respond(game.state.name)
         }
+
+        post ("quit") {
+            call.sessions.clear<GameSession>()
+            call.respond(HttpStatusCode.OK)
+        }
     }
 }

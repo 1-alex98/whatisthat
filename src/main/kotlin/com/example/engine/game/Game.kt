@@ -56,20 +56,25 @@ class Game(val id: String, val host: Player){
     }
 
     suspend fun startFirstRound() {
-        state = State.DRAW
-        rounds.clear()
         newRound()
-        SocketService.sendToAllInGame(id, GameStateChanged(State.DRAW.name))
     }
 
-    private fun newRound(){
-        playerList.forEach {it.ready=false}
+    suspend fun newRound(){
+        state = State.DRAW
+
         rounds.add(Round(rounds.size+1, SentenceGenerator.generate()))
+        SocketService.sendToAllInGame(id, GameStateChanged(State.DRAW.name))
+
+    }
+
+    fun playerIds (): Set<String> {
+        return playerList.map { it.id }.toSet()
     }
 
     enum class State {
         WAITING_TO_START,
         EXPLAIN,
-        DRAW
+        DRAW,
+        REVIEW
     }
 }

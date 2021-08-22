@@ -1,0 +1,43 @@
+.counter {
+    border-radius: 50%;
+
+    border-width: 6px;
+    border-color: #d7cfcf;
+    border-style: solid;
+    animation:colorchange 20s infinite alternate;
+}
+
+.inner-counter {
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+@keyframes colorchange {
+    0% {
+        border-color: rgb(255,0,0);
+    }
+
+    20% {
+        border-color: rgb(255, 0, 255);
+    }
+
+    40% {
+
+        border-color: rgb(0, 0, 255);
+    }
+
+    60% {
+        border-color: rgb(0, 255, 0);
+    }
+
+    80% {
+        border-color: rgb(255, 255, 0);
+    }
+
+    100% {
+        border-color: rgb(255, 0, 0);
+    }
+}
