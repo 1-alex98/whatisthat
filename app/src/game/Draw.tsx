@@ -42,7 +42,7 @@ function processWebSocketMessage(setMissingPlayers: (value: (((prevState: (strin
     }else if(value.identifier === MessageIdentifiers.PLAYER_READY_CHANGED) {
         GameCommunicationService.getUploadMissing()
             .then(value => setMissingPlayers(value))
-            .catch(reason => NotifyService.warn(reason, "Could not fetch msiing players"))
+            .catch(reason => NotifyService.warn(reason, "Could not fetch missing players"))
     }
 }
 
@@ -77,10 +77,10 @@ function Draw(){
             </Card>
             <FreeDrawCanvas drawTime={drawTime} uploaded={()=> setUploaded(true)}/>
             <Modal show={uploaded}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <Modal.Title>Waiting for others</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{missingPlayers?.map(value => <p key={value}>value<br/></p>)}</Modal.Body>
+                <Modal.Body>{missingPlayers?.map(value => <p key={value}>{value}<br/></p>)}</Modal.Body>
             </Modal>
         </div>
     )

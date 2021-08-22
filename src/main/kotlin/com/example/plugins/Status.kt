@@ -13,7 +13,7 @@ import io.ktor.request.*
 fun Application.statusPage() {
     install(StatusPages) {
         exception<CustomStatusCodeException> { cause ->
-            call.respond(cause.statusCode)
+            call.respond(HttpStatusCode(cause.statusCode.toInt(), cause.responseMessage))
         }
     }
 }

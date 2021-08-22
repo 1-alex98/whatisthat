@@ -26,7 +26,7 @@ fun ApplicationCall.getExistingPlayer(): Player{
 }
 
 fun ApplicationCall.isAlien(): Boolean{
-    return getExistingPlayer().role != "alien"
+    return getExistingPlayer().role == "alien"
 }
 
 interface GameStore {

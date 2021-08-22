@@ -107,7 +107,7 @@ export namespace GameCommunicationService{
 
     export function getUploadMissing(): Promise<string[]>{
         let apiUrl = Environment.getApiUrl();
-        return fetch(apiUrl + "/game/uploadMissing",
+        return fetch(apiUrl + "/game/upload-missing",
             {
                 method: "GET"
             })

@@ -16,14 +16,14 @@ fun Route.explain() {
     get("role") {
         val existingPlayer = call.getExistingPlayer()
         val message = existingPlayer.role
-        message ?: throw CustomStatusCodeException(HttpStatusCode.Conflict.value)
+        message ?: throw CustomStatusCodeException(HttpStatusCode.Conflict.value, "You have no role")
         call.respond(message)
     }
 
     get("rounds") {
         val game = call.getExistingGame()
         val settings = game.settings
-        settings ?: throw CustomStatusCodeException(HttpStatusCode.Conflict.value)
+        settings ?: throw CustomStatusCodeException(HttpStatusCode.Conflict.value, "Settings missing")
         call.respond(settings.rounds)
     }
 

@@ -89,7 +89,7 @@ fun Routing.lobby() {
         post("start") {
             val host = call.isHost()
             if(host == null || !host){
-                throw CustomStatusCodeException(403)
+                throw CustomStatusCodeException(403, "Can only start as host")
             }
             val game = call.getGame()
             game?: throw IllegalStateException()

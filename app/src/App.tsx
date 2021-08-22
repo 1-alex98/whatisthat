@@ -12,6 +12,7 @@ import Nav from "./Nav";
 import Explain from "./game/Explain";
 import Main from './Main';
 import Draw from "./game/Draw";
+import Review from "./game/Review";
 
 
 function App() {
@@ -27,6 +28,9 @@ function App() {
             </Route>
             <Route path="/draw">
               <Draw/>
+            </Route>
+            <Route path="/review">
+              <Review/>
             </Route>
             <Route path="/explain">
               <Explain/>

@@ -25,7 +25,7 @@ fun Routing.game() {
 private fun Route.draw() {
     get("sentence-crew") {
         if (call.isAlien()) {
-            throw CustomStatusCodeException(403)
+            throw CustomStatusCodeException(403, "")
         }
         val existingGame = call.getExistingGame()
         val last = existingGame.rounds.last()
