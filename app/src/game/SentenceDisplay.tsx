@@ -1,8 +1,8 @@
 
-import {AlienSentence} from "../global/GameCommunicationService";
+import {ImpostorSentence} from "../global/GameCommunicationService";
 import {OverlayTrigger, Popover} from "react-bootstrap";
 
-function alienSentence(sentence: AlienSentence) {
+function alienSentence(sentence: ImpostorSentence) {
     const popover = (
         <Popover id="popover-basic">
             <Popover.Header as="h3">{sentence.optionsName}</Popover.Header>
@@ -20,7 +20,7 @@ function alienSentence(sentence: AlienSentence) {
         {splits[1]}</h2>;
 }
 
-function SentenceDisplay(props: {sentence: string|AlienSentence|null, isAlien: boolean}){
+function SentenceDisplay(props: {sentence: string|ImpostorSentence|null, isImpostor: boolean}){
 
     if(!props.sentence){
         return <div className="spinner-border text-primary" role="status">
@@ -31,12 +31,12 @@ function SentenceDisplay(props: {sentence: string|AlienSentence|null, isAlien: b
     return (
         <div>
             {
-                !props.isAlien &&
+                !props.isImpostor &&
                 <h2>{props.sentence}</h2>
             }
             {
-                props.isAlien &&
-                alienSentence(props.sentence as AlienSentence)
+                props.isImpostor &&
+                alienSentence(props.sentence as ImpostorSentence)
             }
         </div>
     )

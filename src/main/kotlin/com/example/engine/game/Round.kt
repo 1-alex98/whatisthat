@@ -1,16 +1,16 @@
 package com.example.engine.game
 
 import com.example.engine.sentencegeneration.Sentence
-import com.example.engine.sentencegeneration.Template
 
 class Round (val number: Int, val sentence: Sentence) {
-    private val images: MutableMap<String, String> = mutableMapOf()
+    private val _images: MutableMap<String, String> = mutableMapOf()
+    val images:Map<String, String>
+        get() = _images
     fun addImage(existingPlayerId: String, receive: String) {
-        images[existingPlayerId] = receive
+        _images[existingPlayerId] = receive
     }
 
     fun getMissingPlayers(players: Set<String>): Set<String> {
-        return players.subtract(images.keys)
+        return players.subtract(_images.keys)
     }
-
 }

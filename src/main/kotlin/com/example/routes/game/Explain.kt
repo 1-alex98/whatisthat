@@ -27,18 +27,5 @@ fun Route.explain() {
         call.respond(settings.rounds)
     }
 
-    get("ready-missing") {
-        val game = call.getExistingGame()
-        call.respond(game.playerList.filter { !it.ready }.map { it.name })
-    }
 
-    post("ready") {
-        call.getExistingPlayer().ready = true
-        val existingGame = call.getExistingGame()
-        SocketService.sendToAllInGame(existingGame.id, PlayersReadyChanged())
-        if (existingGame.allReady()) {
-            existingGame.startFirstRound()
-        }
-        call.respond(HttpStatusCode.OK)
-    }
 }

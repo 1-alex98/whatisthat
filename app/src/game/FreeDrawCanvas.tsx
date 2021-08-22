@@ -54,16 +54,23 @@ function uploadImage(stageRef: React.MutableRefObject<Konva.Stage | null>, uploa
     }
 }
 
+function fetchTimeout(setTimeout: (value: number|undefined) => void) {
+    GameCommunicationService.getDrawTimeout()
+        .then(value => setTimeout(value))
+        .catch(reason => NotifyService.warn(reason, "Could not fetch timeout"))
+}
+
 function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
     const [elements, setElements] = useState<DrawElement[]>([]);
-    const history = useHistory();
     const [dimension, setDimension] = useState({w:0,h:0});
     const [settings, setSettings] = useState<Settings>(new Settings("#000000"));
+    const [timeout, setTimeout] = useState<number|undefined>();
     const isDrawing = useRef(false);
     const divRef = useRef<HTMLDivElement|null>(null);
     const stageRef = useRef<Konva.Stage|null>(null);
 
     useEffect(() => {
+        fetchTimeout(setTimeout)
         let current = divRef.current as HTMLDivElement;
         const width= current.offsetWidth
         const height= current.offsetHeight
@@ -111,7 +118,7 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
                     Drawing tools coming soon
                 </div>
                 <div>
-                    <Timer timerFinished={uploadImage(stageRef, props.uploaded)}/>
+                    <Timer timerFinished={uploadImage(stageRef, props.uploaded)} time={timeout}/>
                 </div>
             </div>
             <div className="card flex-grow-1" ref={divRef}>

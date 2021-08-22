@@ -25,8 +25,8 @@ fun ApplicationCall.getExistingPlayer(): Player{
     return existingGame.playerList.find { it.id == playerId } ?: throw NotFoundException()
 }
 
-fun ApplicationCall.isAlien(): Boolean{
-    return getExistingPlayer().role == "alien"
+fun ApplicationCall.isImpostor(): Boolean{
+    return getExistingPlayer().role == "impostor"
 }
 
 interface GameStore {

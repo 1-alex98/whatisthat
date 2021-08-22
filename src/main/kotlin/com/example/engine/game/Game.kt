@@ -43,11 +43,11 @@ class Game(val id: String, val host: Player){
 
     fun assignRoles() {
         playerList.forEach { it.role = "crewmate"}
-        playerList.random().role = "alien"
+        playerList.random().role = "impostor"
     }
 
     fun reset() {
-        playerList.forEach{ it.ready = false}
+        resetReady()
         _playerList.removeIf{ !it.connected }
     }
 
@@ -61,20 +61,42 @@ class Game(val id: String, val host: Player){
 
     suspend fun newRound(){
         state = State.DRAW
-
         rounds.add(Round(rounds.size+1, SentenceGenerator.generate()))
+        resetReady()
         SocketService.sendToAllInGame(id, GameStateChanged(State.DRAW.name))
+    }
 
+    private fun resetReady() {
+        playerList.forEach { it.ready = false }
     }
 
     fun playerIds (): Set<String> {
         return playerList.map { it.id }.toSet()
     }
 
+    fun getNameFromId(key: String): String {
+        return playerList.find { it.id == key }!!.name
+    }
+
+    suspend fun nextRoundOrVote() {
+        if (rounds.size == settings!!.rounds){
+            vote()
+        } else {
+            newRound()
+        }
+    }
+
+    private suspend fun vote() {
+        state = State.VOTE
+        resetReady()
+        SocketService.sendToAllInGame(id, GameStateChanged(State.VOTE.name))
+    }
+
     enum class State {
         WAITING_TO_START,
         EXPLAIN,
         DRAW,
-        REVIEW
+        REVIEW,
+        VOTE
     }
 }

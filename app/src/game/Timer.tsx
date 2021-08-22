@@ -1,13 +1,18 @@
 import {useEffect, useState} from "react";
 import "./Timer.css"
 
-function Timer(props:{timerFinished: () => void}){
+function Timer(props:{timerFinished: () => void; time:number|undefined}){
 
-    const [counter, setCounter] = useState(60);
+    const [counter, setCounter] = useState(-10);
     useEffect(() => {
         if(counter > 0)
             setTimeout(() => setCounter(counter - 1), 1000);
     }, [counter]);
+    useEffect(() => {
+        if(props.time && counter === -10){
+            setCounter(props.time)
+        }
+    },[props, counter])
     useEffect(() => {
         if(counter === 0)
             props.timerFinished()

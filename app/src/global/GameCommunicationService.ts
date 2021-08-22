@@ -1,10 +1,16 @@
 import {Environment} from "./Environment";
 
 
-export interface AlienSentence {
+export interface ImpostorSentence {
     raw: string;
     optionsName: string;
     options: string[];
+}
+
+
+export interface DrawnImage{
+    name: string;
+    dataUrl: string;
 }
 
 export namespace GameCommunicationService{
@@ -49,6 +55,7 @@ export namespace GameCommunicationService{
                 return value.json()
             })
     }
+
     export function ready(): Promise<void>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/ready",
@@ -62,6 +69,7 @@ export namespace GameCommunicationService{
                 return
             })
     }
+
     export function missingReady(): Promise<string[]>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/ready-missing",
@@ -75,7 +83,6 @@ export namespace GameCommunicationService{
                 return value.json()
             })
     }
-
 
     export function getSentence(): Promise<string>{
         let apiUrl = Environment.getApiUrl();
@@ -91,9 +98,9 @@ export namespace GameCommunicationService{
             })
     }
 
-    export function getAlienSentence(): Promise<AlienSentence>{
+    export function getImpostorSentence(): Promise<ImpostorSentence>{
         let apiUrl = Environment.getApiUrl();
-        return fetch(apiUrl + "/game/sentence-alien",
+        return fetch(apiUrl + "/game/sentence-impostor",
             {
                 method: "GET"
             })
@@ -136,6 +143,61 @@ export namespace GameCommunicationService{
                 if(value.status !== 201) {
                     throw value.text()
                 }
+            })
+    }
+
+    export function getSentenceReview(): Promise<string>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/sentence-review",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.text()
+            })
+    }
+
+    export function getReviewImages(): Promise<DrawnImage[]>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/review-images",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
+            })
+    }
+
+    export function getReviewTimeout(): Promise<number>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/review-time",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
+            })
+    }
+    export function getDrawTimeout(): Promise<number>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/draw-time",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
             })
     }
 }

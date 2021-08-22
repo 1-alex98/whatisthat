@@ -13,6 +13,7 @@ import Explain from "./game/Explain";
 import Main from './Main';
 import Draw from "./game/Draw";
 import Review from "./game/Review";
+import Vote from "./game/Vote";
 
 
 function App() {
@@ -25,6 +26,9 @@ function App() {
           <Switch>
             <Route path="/host">
               <Host/>
+            </Route>
+            <Route path="/vote">
+              <Vote/>
             </Route>
             <Route path="/draw">
               <Draw/>

@@ -43,7 +43,7 @@ function listOnWaitingPlayersChanged(message: WebsocketMessage,
 }
 
 function Explain(){
-    let [role, setRole] = useState("alien");
+    let [role, setRole] = useState("impostor");
     let [ready, setReady] = useState(false);
     let [rounds, setRounds] = useState(6);
     let [waitingFor, setWaitingFor] = useState<string[]>([]);

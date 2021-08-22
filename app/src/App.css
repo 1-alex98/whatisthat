@@ -33,3 +33,7 @@ html, body {
 #root {
   height: 100%;
 }
+
+.carousel-indicators button{
+  background-color: #0d6efd!important;
+}

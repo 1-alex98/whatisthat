@@ -1,24 +1,24 @@
 import {useEffect, useState} from "react";
 import {Card, Modal} from "react-bootstrap";
 import SentenceDisplay from "./SentenceDisplay";
-import {AlienSentence, GameCommunicationService} from "../global/GameCommunicationService";
+import {ImpostorSentence, GameCommunicationService} from "../global/GameCommunicationService";
 import {NotifyService} from "../global/NotifyService";
 import FreeDrawCanvas from "./FreeDrawCanvas";
 import {MessageIdentifiers, WebsocketMessage, WebsocketService} from "../global/WebsocketService";
 import {useHistory} from "react-router-dom";
 import {History} from "history";
 
-function fetchSentence(setIsAlien: (value: (((prevState: boolean) => boolean) | boolean)) => void,
-                       setSentence: (value: (((prevState: (string | AlienSentence | null)) => (string | AlienSentence | null)) | string | AlienSentence | null)) => void) {
+function fetchSentence(setIsImpostor: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+                       setSentence: (value: (((prevState: (string | ImpostorSentence | null)) => (string | ImpostorSentence | null)) | string | ImpostorSentence | null)) => void) {
     GameCommunicationService.getRole()
         .then(value => {
-            const isAlien = value === 'alien'
-            setIsAlien(isAlien)
-            return isAlien
+            const isImpostor = value === 'impostor'
+            setIsImpostor(isImpostor)
+            return isImpostor
         })
-        .then(isAlien => {
-            if(isAlien){
-                GameCommunicationService.getAlienSentence()
+        .then(isImpostor => {
+            if(isImpostor){
+                GameCommunicationService.getImpostorSentence()
                     .then(value => setSentence(value))
                     .catch(err => NotifyService.warn(err, "Could not fetch sentence"))
             }else {
@@ -47,8 +47,8 @@ function processWebSocketMessage(setMissingPlayers: (value: (((prevState: (strin
 }
 
 function Draw(){
-    let [sentence, setSentence] = useState<string|AlienSentence|null>(null);
-    let [isAlien, setIsAlien] = useState(false);
+    let [sentence, setSentence] = useState<string|ImpostorSentence|null>(null);
+    let [isImpostor, setIsImpostor] = useState(false);
     let [drawTime, setDrawTime] = useState<number|null>(null);
     let [missingPlayers, setMissingPlayers] = useState<null | string[]>(null);
     let [uploaded, setUploaded] = useState<boolean>(false);
@@ -56,7 +56,7 @@ function Draw(){
 
     useEffect(
         () => {
-            fetchSentence(setIsAlien, setSentence);
+            fetchSentence(setIsImpostor, setSentence);
             fetchDrawTime(setDrawTime)
         }, [])
 
@@ -72,7 +72,7 @@ function Draw(){
         <div className="d-flex p-3 flex-column h-100">
             <Card>
                 <Card.Body>
-                    <SentenceDisplay sentence={sentence} isAlien={isAlien}/>
+                    <SentenceDisplay sentence={sentence} isImpostor={isImpostor}/>
                 </Card.Body>
             </Card>
             <FreeDrawCanvas drawTime={drawTime} uploaded={()=> setUploaded(true)}/>

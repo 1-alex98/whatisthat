@@ -25,6 +25,9 @@ function redirectCorrectPage(state: string, history: History) {
         case "REVIEW":
             history.push("/review")
             break;
+        case "VOTE":
+            history.push("/vote")
+            break;
     }
 }
 
