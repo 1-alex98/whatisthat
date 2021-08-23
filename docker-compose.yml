@@ -1,0 +1,38 @@
+version: '3.3'
+services:
+  server:
+    container_name: server
+    build: ./
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`vontrostorff.de`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.server.entryPoints=web-secure"
+      - "traefik.http.routers.server.tls.certresolver=default"
+      - "traefik.http.services.server.loadbalancer.server.port=8080"
+  front-end:
+    container_name: front
+    build: ./app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`vontrostorff.de`) && ! PathPrefix(`/api`)"
+      - "traefik.http.routers.server.entryPoints=web-secure"
+      - "traefik.http.routers.server.tls.certresolver=default"
+      - "traefik.http.services.server.loadbalancer.server.port=8080"
+  reverse-proxy:
+    image: traefik:v2.4
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/traefik:/etc/traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.reverse-proxy.entryPoints=web-secure"
+      - "traefik.http.routers.reverse-proxy.rule=Host(`traefik.vontrostorff.de`)"
+      - "traefik.http.routers.reverse-proxy.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/etc/traefik/userfile"
+      - "traefik.http.routers.reverse-proxy.service=api@internal"
+      - "traefik.http.routers.reverse-proxy.tls.certresolver=default"
+      - "traefik.http.services.reverse-proxy.loadbalancer.server.port=8080" # Dummy port so Docker doesn't complain

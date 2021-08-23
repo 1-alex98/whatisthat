@@ -1,0 +1,31 @@
+# Create the internal dashboard service
+api:
+  dashboard: true
+
+# Ports Træfik will hog
+entryPoints:
+  web:
+    address: ":80"
+  web-secure:
+    address: ":443"
+
+# Listen for changes on docker and the dynamic configuration file
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    network: "share-fridge_default"
+    exposedByDefault: false
+    watch: true
+  file:
+    filename: /etc/traefik/config.yml
+    watch: true
+
+# Create a Let's Encrypt certificate resolver
+certificatesResolvers:
+  default:
+    acme:
+      email: alexander.von.trostorff@gmail.com
+      storage: /etc/traefik/acme.json
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web

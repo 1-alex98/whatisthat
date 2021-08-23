@@ -4,6 +4,8 @@ import {NotifyService} from "../global/NotifyService";
 import {LobbyCommunicationService} from "../global/LobbyCommunicationService";
 import {Button} from "react-bootstrap";
 import {GlobalCommunicationService} from "../global/GlobalCommunicationService";
+import {useHistory} from "react-router-dom";
+import {MessageIdentifiers, WebsocketService} from "../global/WebsocketService";
 
 
 function fetchWinner(setWinner: (value: (((prevState: string) => string) | string)) => void) {
@@ -33,6 +35,17 @@ function Result(){
     let [winner, setWinner] = useState("crew");
     let [impostor, setImpostor] = useState("unknown");
     let [isHost, setIsHost] = useState(false);
+    let history = useHistory();
+
+    useEffect(() => {
+        let subscription = WebsocketService.listenMessage()
+            .subscribe(value => {
+                if(value.identifier === MessageIdentifiers.GAME_STATE_CHANGED && value.message === "WAITING_TO_START"){
+                    history.push("/lobby")
+                }
+            });
+        return () => subscription.unsubscribe()
+    },[history])
 
     useEffect(() => {
         fetchImpostor(setImpostor)
