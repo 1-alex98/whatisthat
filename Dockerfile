@@ -1,4 +1,6 @@
 FROM openjdk:11-jdk AS builder
+WORKDIR /build
+COPY ./ ./
 RUN ./gradlew installDist
 
 FROM openjdk:11-jdk
