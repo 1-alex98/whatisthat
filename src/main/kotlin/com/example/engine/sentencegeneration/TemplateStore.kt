@@ -20,13 +20,20 @@ object TemplateStore {
 
     private fun parseBlocks(): Set<Block> {
         val blocks = mutableSetOf<Block>()
-        val resource: URL = Game::class.java.classLoader.getResource("sentences/block")!!
+        val resource: URL = loadFile("/sentences/block")
         Path(resource.path)
             .listDirectoryEntries()
             .forEach {
                 blocks.add(parseBlock(it))
             }
         return blocks
+    }
+
+    private fun loadFile(path: String): URL {
+        if(System.getenv("SENTENCES_PATH") != null){
+            return URL("file:"+System.getenv("SENTENCES_PATH")!!+path)
+        }
+        return Game::class.java.getResource(path)!!
     }
 
     private fun parseBlock(path: Path): Block {
@@ -39,7 +46,7 @@ object TemplateStore {
 
     private fun parseTemplates(): Set<Template> {
         val templates = mutableSetOf<Template>()
-        val resource: URL = Game::class.java.classLoader.getResource("sentences/sentences.yml")!!
+        val resource: URL = loadFile("/sentences/sentences.yml")
         val createYamlInput = Yaml.createYamlInput(File(resource.toURI()))
         val readYamlMapping = createYamlInput.readYamlMapping()
         val yamlSequence = readYamlMapping.yamlSequence("sentences")
