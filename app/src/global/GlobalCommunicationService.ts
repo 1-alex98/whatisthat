@@ -14,6 +14,19 @@ export namespace GlobalCommunicationService{
                 return value.text()
             })
     }
+    export function reset(): Promise<void>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/global/reset",
+            {
+                method: "POST"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return
+            })
+    }
     export function quit(): Promise<void>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/global/quit",

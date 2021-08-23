@@ -15,6 +15,7 @@ export namespace VoteCommunicationService{
                 return value.json()
             })
     }
+
     export function winner(): Promise<string>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/winner",
@@ -28,6 +29,7 @@ export namespace VoteCommunicationService{
                 return value.text()
             })
     }
+
     export function impostor(): Promise<string>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/impostor",
@@ -41,6 +43,7 @@ export namespace VoteCommunicationService{
                 return value.text()
             })
     }
+
     export function vote(selectedPlayer: string): Promise<void>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/vote",

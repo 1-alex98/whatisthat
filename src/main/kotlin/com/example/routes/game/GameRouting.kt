@@ -20,53 +20,60 @@ fun Routing.game() {
         draw()
         ready()
         review()
-        get("votable-players") {
-            val existingGame = call.getExistingGame()
-            val votablePlayerNames = existingGame.playerList.filter { it.id != call.getExistingPlayerId() }
-                .map { it.name }
-            call.respond(votablePlayerNames)
-        }
+        resultAndVote()
+    }
+}
 
-        post("vote"){
-            val existingGame = call.getExistingGame()
-            val receive = call.receive<String>()
-            val existingPlayer = call.getExistingPlayer()
-            if(existingPlayer.voted) {
-                throw CustomStatusCodeException(403, "Already voted")
-            }
-            existingPlayer.voted= true
-            existingGame.playerList.find{ it.name == receive }!!.votedFor++
-            existingPlayer.ready = true
-            if(existingGame.allReady()){
-                existingGame.state = Game.State.RESULT
-                SocketService.sendToAllInGame(existingGame.id, GameStateChanged(Game.State.RESULT.name))
-            }
-            call.respond(HttpStatusCode.Created)
-        }
+private fun Route.resultAndVote() {
 
-        get("impostor"){
-            val existingGame = call.getExistingGame()
-            if(existingGame.state != Game.State.RESULT){
-                throw CustomStatusCodeException(403, "Game must be finished")
-            }
-            call.respond(existingGame.playerList.find { it.role == "impostor" }!!.name)
-        }
+    get("votable-players") {
+        val existingGame = call.getExistingGame()
+        val votablePlayerNames = existingGame.playerList.filter { it.id != call.getExistingPlayerId() }
+            .map { it.name }
+        call.respond(votablePlayerNames)
+    }
 
-        get("winner"){
-            val existingGame = call.getExistingGame()
-            if(existingGame.state != Game.State.RESULT){
-                throw CustomStatusCodeException(403, "Game must be finished")
-            }
-            val maxVote = existingGame.playerList.maxOf { it.votedFor }
-            val playersVoted = existingGame.playerList.filter { it.votedFor == maxVote }
-            if(playersVoted.size > 1){
-                call.respond("impostor")
+    post("vote") {
+        val existingGame = call.getExistingGame()
+        val receive = call.receive<String>()
+        val existingPlayer = call.getExistingPlayer()
+        if (existingPlayer.voted) {
+            throw CustomStatusCodeException(403, "Already voted")
+        }
+        existingPlayer.voted = true
+        val find = existingGame.playerList.find { it.name == receive }
+        find!!.votedFor++
+        existingPlayer.ready = true
+        SocketService.sendToAllInGame(existingGame.id, PlayersReadyChanged())
+        if (existingGame.allReady()) {
+            existingGame.state = Game.State.RESULT
+            SocketService.sendToAllInGame(existingGame.id, GameStateChanged(Game.State.RESULT.name))
+        }
+        call.respond(HttpStatusCode.Created)
+    }
+
+    get("impostor") {
+        val existingGame = call.getExistingGame()
+        if (existingGame.state != Game.State.RESULT) {
+            throw CustomStatusCodeException(403, "Game must be finished")
+        }
+        call.respond(existingGame.playerList.find { it.role == "impostor" }!!.name)
+    }
+
+    get("winner") {
+        val existingGame = call.getExistingGame()
+        if (existingGame.state != Game.State.RESULT) {
+            throw CustomStatusCodeException(403, "Game must be finished")
+        }
+        val maxVote = existingGame.playerList.maxOf { it.votedFor }
+        val playersVoted = existingGame.playerList.filter { it.votedFor == maxVote }
+        if (playersVoted.size > 1) {
+            call.respond("impostor")
+        } else {
+            if (playersVoted[0].role == "impostor") {
+                call.respond("crew")
             } else {
-                if(playersVoted[0].role == "impostor"){
-                    call.respond("crew")
-                }else{
-                    call.respond("impostor")
-                }
+                call.respond("impostor")
             }
         }
     }
@@ -80,10 +87,12 @@ private fun Route.review() {
         }
         call.respond(existingGame.rounds.last().sentence.asStringComplete())
     }
+
     get("review-time") {
         val existingGame = call.getExistingGame()
         call.respond(existingGame.settings!!.secondsDiscussing)
     }
+
     get("review-images") {
         val existingGame = call.getExistingGame()
         val currentRound = existingGame.rounds.last()

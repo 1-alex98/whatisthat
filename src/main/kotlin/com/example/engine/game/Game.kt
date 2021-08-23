@@ -46,9 +46,21 @@ class Game(val id: String, val host: Player){
         playerList.random().role = "impostor"
     }
 
-    fun reset() {
+    fun resetForStart() {
         resetReady()
+        _playerList.removeIf { !it.connected }
+    }
+
+    suspend fun reset() {
+        resetReady()
+        rounds.clear()
+        settings = null
         _playerList.removeIf{ !it.connected }
+        val resetPlayers = _playerList.map { Player(it.name, it.id, it.host, it.connected) }
+        _playerList.clear()
+        _playerList.addAll(resetPlayers)
+        state = State.WAITING_TO_START
+        SocketService.sendToAllInGame(id, GameStateChanged(State.WAITING_TO_START.name))
     }
 
     fun allReady(): Boolean {

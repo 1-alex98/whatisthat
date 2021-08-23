@@ -3,6 +3,7 @@ package com.example.routes.global
 import com.example.engine.game.Game
 import com.example.engine.game.Player
 import com.example.engine.store.GameStore
+import com.example.engine.store.getExistingGame
 import com.example.engine.store.getGame
 import com.example.routes.websocket.SocketService
 import com.example.routes.websocket.message.PlayersChanged
@@ -33,6 +34,11 @@ fun Routing.global() {
 
         post ("quit") {
             call.sessions.clear<GameSession>()
+            call.respond(HttpStatusCode.OK)
+        }
+
+        post ("reset") {
+            call.getExistingGame().reset()
             call.respond(HttpStatusCode.OK)
         }
     }

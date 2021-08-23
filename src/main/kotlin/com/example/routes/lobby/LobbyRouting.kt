@@ -96,7 +96,7 @@ fun Routing.lobby() {
             val startRequest = call.receive<StartRequest>()
             game.settings = GameSettings(startRequest.rounds, startRequest.drawTime, startRequest.reviewTime)
             game.state = Game.State.EXPLAIN
-            game.reset()
+            game.resetForStart()
             game.assignRoles()
             SocketService.sendToAllInGame(game.id, PlayersChanged())
             SocketService.sendToAllInGame(game.id, GameStateChanged(Game.State.EXPLAIN.name))
