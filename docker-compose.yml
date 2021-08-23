@@ -3,6 +3,8 @@ services:
   server:
     container_name: server
     build: ./
+    ports:
+    - 8080:8080
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.server.rule=Host(`vontrostorff.de`) && PathPrefix(`/api`)"
