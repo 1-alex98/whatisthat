@@ -14,7 +14,7 @@ services:
     build: ./app
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.front.rule=Host(`vontrostorff.de`) && ! PathPrefix(`/api`)"
+      - "traefik.http.routers.front.rule=Host(`vontrostorff.de`) && !PathPrefix(`/api`)"
       - "traefik.http.routers.front.entryPoints=web-secure"
       - "traefik.http.routers.front.tls.certresolver=default"
       - "traefik.http.services.front.loadbalancer.server.port=8080"
