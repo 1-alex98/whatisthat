@@ -98,13 +98,15 @@ export namespace LobbyCommunicationService{
             })
     }
 
-    export function start(rounds: number) : Promise<void>{
+    export function start(rounds: number, drawTime: number, reviewTime: number) : Promise<void>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/lobby/start",
             {
                 method: "POST",
                 body: JSON.stringify({
-                    rounds: rounds
+                    rounds: rounds,
+                    drawTime: drawTime,
+                    reviewTime: reviewTime
                 }),
                 headers: {
                     "Content-Type": "application/json"

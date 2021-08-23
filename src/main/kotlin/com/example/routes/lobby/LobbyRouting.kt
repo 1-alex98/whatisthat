@@ -94,7 +94,7 @@ fun Routing.lobby() {
             val game = call.getGame()
             game?: throw IllegalStateException()
             val startRequest = call.receive<StartRequest>()
-            game.settings = GameSettings(startRequest.rounds)
+            game.settings = GameSettings(startRequest.rounds, startRequest.drawTime, startRequest.reviewTime)
             game.state = Game.State.EXPLAIN
             game.reset()
             game.assignRoles()

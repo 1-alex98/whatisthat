@@ -3,13 +3,13 @@ import "./Timer.css"
 
 function Timer(props:{timerFinished: () => void; time:number|undefined}){
 
-    const [counter, setCounter] = useState(-10);
+    const [counter, setCounter] = useState<number|null>(null);
     useEffect(() => {
-        if(counter > 0)
+        if(counter && counter > 0)
             setTimeout(() => setCounter(counter - 1), 1000);
     }, [counter]);
     useEffect(() => {
-        if(props.time && counter === -10){
+        if(props.time && !counter){
             setCounter(props.time)
         }
     },[props, counter])
@@ -21,7 +21,7 @@ function Timer(props:{timerFinished: () => void; time:number|undefined}){
     return (
         <div className="counter">
             <div className="inner-counter">
-                <p>{counter}</p>
+                <p>{counter?counter:''}</p>
             </div>
         </div>
     )

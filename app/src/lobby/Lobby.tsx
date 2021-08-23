@@ -38,14 +38,16 @@ function fetchIsHost(setHost: (value: (((prevState: boolean) => boolean) | boole
         })
 }
 
-function startGame(rounds: number) {
-    LobbyCommunicationService.start(rounds)
+function startGame(rounds: number, drawTime: number, reviewTime: number) {
+    LobbyCommunicationService.start(rounds, drawTime, reviewTime)
         .catch(reason => NotifyService.warn(reason, "Game could not be started"))
 }
 
 function Settings() {
     let [host, setHost] = useState(false);
     let [rounds, setRounds] = useState(6);
+    let [drawTime, setDrawTime] = useState(70);
+    let [reviewTime, setReviewTime] = useState(90);
     useEffect(() => {
         fetchIsHost(setHost)
     },[])
@@ -68,10 +70,14 @@ function Settings() {
                 <Form>
                     <Form.Label>Rounds:{rounds}</Form.Label>
                     <Form.Range min={2} max={10} defaultValue={6} onChange={event => setRounds(Number(event.target.value))}/>
+                    <Form.Label>Draw time in seconds:{drawTime}</Form.Label>
+                    <Form.Range min={10} max={200} defaultValue={70} onChange={event => setDrawTime(Number(event.target.value))}/>
+                    <Form.Label>Review time in seconds:{reviewTime}</Form.Label>
+                    <Form.Range min={10} max={200} defaultValue={90} onChange={event => setReviewTime(Number(event.target.value))}/>
                 </Form>
             </Card.Body>
         </Card>
-        <Button variant="primary" onClick={event=> startGame(rounds)}>
+        <Button variant="primary" onClick={event=> startGame(rounds, drawTime, reviewTime)}>
             <i className="fas fa-play"/> Start game
         </Button>
     </div>);

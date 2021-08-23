@@ -1,0 +1,4 @@
+.card-selected {
+    box-shadow: 0 .5rem 1rem rgba(13,110,253,.30)!important;
+    background-color: #c1c1c1 !important;
+}

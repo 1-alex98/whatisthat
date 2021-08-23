@@ -97,6 +97,7 @@ class Game(val id: String, val host: Player){
         EXPLAIN,
         DRAW,
         REVIEW,
-        VOTE
+        VOTE,
+        RESULT,
     }
 }

@@ -18,7 +18,7 @@ export namespace GlobalCommunicationService{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/global/quit",
             {
-                method: "POST"
+                method: "POST",
             })
             .then(value => {
                 if(value.status !== 200) {
