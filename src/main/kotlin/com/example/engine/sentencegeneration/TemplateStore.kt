@@ -2,6 +2,8 @@ package com.example.engine.sentencegeneration
 
 import com.amihaiemil.eoyaml.Yaml
 import com.example.engine.game.Game
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URL
 import java.nio.file.Path
@@ -10,12 +12,15 @@ import kotlin.io.path.listDirectoryEntries
 
 
 object TemplateStore {
+    private val logger: Logger = LoggerFactory.getLogger(TemplateStore::class.java)
     private val templates: Set<Template>
     private val blocks: Set<Block>
 
     init {
+        logger.info("Starting to parse Sentences")
         blocks = parseBlocks()
         templates = parseTemplates()
+        logger.info("Finished parsing sentences")
     }
 
     private fun parseBlocks(): Set<Block> {
