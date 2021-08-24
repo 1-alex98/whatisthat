@@ -71,7 +71,7 @@ export namespace WebsocketService{
     export async function connect(){
         await lock.promise
         lock.enable()
-        let url = `${window.location.protocol==="https:"?"wss":"ws"}://${window.location.host}/ws/listen`;
+        let url = `${window.location.protocol==="https:"?"wss":"ws"}://${window.location.host}/api/ws/listen`;
         if(ws){
             quit()
         }

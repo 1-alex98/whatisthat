@@ -42,7 +42,7 @@ val secreteSigningBytes = SecureRandom.getInstanceStrong().asKotlinRandom().next
 @OptIn(ExperimentalCoroutinesApi::class)
 fun Routing.websocket() {
 
-    webSocket("/ws/listen") {
+    webSocket("/api/ws/listen") {
         var channel: Channel<Message>? = null
         val (playerId, gameId) = getPlayerAndGameId()
         try {
