@@ -3,13 +3,13 @@ import {useEffect, useRef, useState} from "react";
 import {Layer, Stage, Line} from "react-konva";
 import Timer from "./Timer";
 import Konva from "konva";
-import {useHistory} from "react-router-dom";
-import {History} from "history";
 import {NotifyService} from "../global/NotifyService";
 import {GameCommunicationService} from "../global/GameCommunicationService";
+import {Vector2d} from "konva/lib/types";
+import DrawingTools from "./DrawingTools";
 
 
-class Settings{
+export class Settings{
     constructor(public color: string) {
     }
 }
@@ -60,6 +60,18 @@ function fetchTimeout(setTimeout: (value: number|undefined) => void) {
         .catch(reason => NotifyService.warn(reason, "Could not fetch timeout"))
 }
 
+function addPointToLine(lastElement: DrawElement | LineElement, point: Vector2d, elements: DrawElement[], setElements: (value: (((prevState: DrawElement[]) => DrawElement[]) | DrawElement[])) => void) {
+    if (lastElement instanceof LineElement) {
+        lastElement.points = lastElement.points.concat({"x": point.x, "y": point.y});
+
+        // replace last
+        elements.splice(elements.length - 1, 1, lastElement);
+        setElements(elements.concat());
+    }
+}
+
+
+
 function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
     const [elements, setElements] = useState<DrawElement[]>([]);
     const [dimension, setDimension] = useState({w:0,h:0});
@@ -82,14 +94,17 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
         }
     }, [])
 
-    const handleMouseDown = (e: any) => {
+    document.onmousedown = ()=> isDrawing.current=true
+    document.onmouseup = ()=> isDrawing.current=false
+
+    function handleMouseDown(e: any) {
         isDrawing.current = true;
         const pos = e.target.getStage().getPointerPosition();
-        let element = new LineElement(settings, [{"x": pos.x, "y": pos.y}]);
+        let element = new LineElement(settings, [{"x": pos.x, "y": pos.y},{"x": pos.x+0.001, "y": pos.y+0.001}]);
         setElements([...elements, element]);
-    };
+    }
 
-    const handleMouseMove = (e: any) => {
+    function handleMouseMove(e: any){
         // no drawing - skipping
         if (!isDrawing.current) {
             return;
@@ -98,24 +113,24 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
         const point = stage.getPointerPosition();
         let lastElement = elements[elements.length - 1];
         // add point
-        if(lastElement instanceof LineElement){
-            lastElement.points = lastElement.points.concat({"x":point.x, "y":point.y});
+        addPointToLine(lastElement, point, elements, setElements);
+    }
 
-            // replace last
-            elements.splice(elements.length - 1, 1, lastElement);
-            setElements(elements.concat());
-        }
-    };
-
-    const handleMouseUp = () => {
+    function handleMouseUp(e: any){
         isDrawing.current = false;
-    };
+    }
+
+    function handleMouseEnter(e: any) {
+        if(isDrawing.current){
+            handleMouseDown(e)
+        }
+    }
 
     return (
         <div className="flex-grow-1 d-flex mt-2 d-flex flex-column">
             <div className="d-flex mb-2">
                 <div className="flex-grow-1">
-                    Drawing tools coming soon
+                    <DrawingTools setSetting={setSettings}/>
                 </div>
                 <div>
                     <Timer timerFinished={uploadImage(stageRef, props.uploaded)} time={timeout}/>
@@ -128,6 +143,8 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
                     onMouseDown={handleMouseDown}
                     onMousemove={handleMouseMove}
                     onMouseup={handleMouseUp}
+                    onMouseLeave={handleMouseMove}
+                    onMouseEnter={handleMouseEnter}
                     ref={stageRef}
                 >
                     <Layer>
