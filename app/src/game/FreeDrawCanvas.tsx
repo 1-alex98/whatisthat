@@ -71,6 +71,10 @@ function addPointToLine(lastElement: DrawElement | LineElement, point: Vector2d,
 }
 
 
+function revert(elements: DrawElement[], setElements: (value: (((prevState: DrawElement[]) => DrawElement[]) | DrawElement[])) => void) {
+    elements.splice(-1, 1);
+    setElements(elements.concat())
+}
 
 function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
     const [elements, setElements] = useState<DrawElement[]>([]);
@@ -130,7 +134,7 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
         <div className="flex-grow-1 d-flex mt-2 d-flex flex-column">
             <div className="d-flex mb-2">
                 <div className="flex-grow-1">
-                    <DrawingTools setSetting={setSettings}/>
+                    <DrawingTools setSetting={setSettings} revert={() => revert(elements, setElements)}/>
                 </div>
                 <div>
                     <Timer timerFinished={uploadImage(stageRef, props.uploaded)} time={timeout}/>
