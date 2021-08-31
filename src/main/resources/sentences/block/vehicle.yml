@@ -1,8 +1,0 @@
-id: vehicle
-name: vehicle
-options:
-  - rocket
-  - train
-  - taxi
-  - plane
-  - car
