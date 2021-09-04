@@ -12,11 +12,37 @@ export interface DrawnImage{
     name: string;
     dataUrl: string;
 }
-
 export namespace GameCommunicationService{
     export function getRounds(): Promise<number>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/rounds",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
+            })
+    }
+
+    export function getFullSentenceAsImpostor(): Promise<string>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/full-sentence-impostor",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.text()
+            })
+    }
+    export function isFullSentenceActiveImpostor(): Promise<boolean>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/full-sentence-impostor-active",
             {
                 method: "GET"
             })

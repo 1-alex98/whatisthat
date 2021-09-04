@@ -38,8 +38,8 @@ function fetchIsHost(setHost: (value: (((prevState: boolean) => boolean) | boole
         })
 }
 
-function startGame(rounds: number, drawTime: number, reviewTime: number) {
-    LobbyCommunicationService.start(rounds, drawTime, reviewTime)
+function startGame(rounds: number, drawTime: number, reviewTime: number, impostorHacking: number, impostorGetsCompleteSentence: number) {
+    LobbyCommunicationService.start(rounds, drawTime, reviewTime, impostorHacking, impostorGetsCompleteSentence)
         .catch(reason => NotifyService.warn(reason, "Game could not be started"))
 }
 
@@ -48,6 +48,8 @@ function Settings() {
     let [rounds, setRounds] = useState(6);
     let [drawTime, setDrawTime] = useState(70);
     let [reviewTime, setReviewTime] = useState(90);
+    let [impostorHacking, setImpostorHacking] = useState(1);
+    let [impostorGetsCompleteSentence, setImpostorGetsCompleteSentence] = useState(1);
     useEffect(() => {
         fetchIsHost(setHost)
     },[])
@@ -74,10 +76,14 @@ function Settings() {
                     <Form.Range min={10} max={200} defaultValue={70} onChange={event => setDrawTime(Number(event.target.value))}/>
                     <Form.Label>Review time in seconds:{reviewTime}</Form.Label>
                     <Form.Range min={10} max={200} defaultValue={90} onChange={event => setReviewTime(Number(event.target.value))}/>
+                    <Form.Label>Times impostor can hack:{impostorHacking}</Form.Label>
+                    <Form.Range min={0} max={4} defaultValue={1} onChange={event => setImpostorHacking(Number(event.target.value))}/>
+                    <Form.Label>Times impostor gets correct sentence:{impostorGetsCompleteSentence}</Form.Label>
+                    <Form.Range min={0} max={4} defaultValue={1} onChange={event => setImpostorGetsCompleteSentence(Number(event.target.value))}/>
                 </Form>
             </Card.Body>
         </Card>
-        <Button variant="primary" onClick={event=> startGame(rounds, drawTime, reviewTime)}>
+        <Button variant="primary" onClick={event=> startGame(rounds, drawTime, reviewTime, impostorHacking, impostorGetsCompleteSentence)}>
             <i className="fas fa-play"/> Start game
         </Button>
     </div>);

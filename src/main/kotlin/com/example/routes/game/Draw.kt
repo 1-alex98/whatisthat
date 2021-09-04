@@ -2,7 +2,6 @@ package com.example.routes.game
 
 import com.example.engine.game.Game
 import com.example.engine.store.getExistingGame
-import com.example.engine.store.getExistingPlayer
 import com.example.engine.store.isImpostor
 import com.example.routes.CustomStatusCodeException
 import com.example.routes.websocket.SocketService
@@ -57,5 +56,33 @@ fun Route.draw() {
         val missingPlayerIds = existingGame.rounds.last().getMissingPlayers(existingGame.playerIds())
         val missingPlayerNames = existingGame.playerList.filter { missingPlayerIds.contains(it.id) }.map { it.name }
         call.respond(missingPlayerNames)
+    }
+
+    get("full-sentence-impostor"){
+        if(!call.isImpostor()){
+            throw CustomStatusCodeException(403, "Must be impostor")
+        }
+        val existingGame = call.getExistingGame()
+        val currentRound = existingGame.rounds.last()
+        if(currentRound.impostorKnowsFullSentence){
+            call.respond(currentRound.sentence.asStringComplete())
+            return@get
+        }
+        val impostorActionsLeft = existingGame.impostorActionsLeft!!
+        if(impostorActionsLeft.impostorGetsCompleteSentence <=0){
+            throw CustomStatusCodeException(400, "Action already used up")
+        }
+        impostorActionsLeft.impostorGetsCompleteSentence = impostorActionsLeft.impostorGetsCompleteSentence - 1
+        currentRound.impostorKnowsFullSentence = true
+        call.respond(currentRound.sentence.asStringComplete())
+    }
+
+    get("full-sentence-impostor-active"){
+        if(!call.isImpostor()){
+            throw CustomStatusCodeException(403, "Must be impostor")
+        }
+        val existingGame = call.getExistingGame()
+        val currentRound = existingGame.rounds.last()
+        call.respond(currentRound.impostorKnowsFullSentence)
     }
 }

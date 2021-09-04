@@ -98,7 +98,7 @@ export namespace LobbyCommunicationService{
             })
     }
 
-    export function start(rounds: number, drawTime: number, reviewTime: number) : Promise<void>{
+    export function start(rounds: number, drawTime: number, reviewTime: number, impostorHacking: number, impostorGetsCompleteSentence: number) : Promise<void>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/lobby/start",
             {
@@ -106,7 +106,9 @@ export namespace LobbyCommunicationService{
                 body: JSON.stringify({
                     rounds: rounds,
                     drawTime: drawTime,
-                    reviewTime: reviewTime
+                    reviewTime: reviewTime,
+                    impostorHacking: impostorHacking,
+                    impostorGetsCompleteSentence: impostorGetsCompleteSentence,
                 }),
                 headers: {
                     "Content-Type": "application/json"

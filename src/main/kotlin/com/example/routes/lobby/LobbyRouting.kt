@@ -13,17 +13,13 @@ import com.example.session.GameSession
 import com.example.session.getPlayerId
 import com.example.session.isHost
 import io.ktor.application.*
-import io.ktor.client.features.*
 import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.http.cio.websocket.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
 import io.ktor.util.pipeline.*
-import io.ktor.websocket.*
-import kotlinx.coroutines.channels.Channel
 import java.util.*
 
 fun Routing.lobby() {
@@ -94,10 +90,7 @@ fun Routing.lobby() {
             val game = call.getGame()
             game?: throw IllegalStateException()
             val startRequest = call.receive<StartRequest>()
-            game.settings = GameSettings(startRequest.rounds, startRequest.drawTime, startRequest.reviewTime)
-            game.state = Game.State.EXPLAIN
-            game.resetForStart()
-            game.assignRoles()
+            game.start(GameSettings(startRequest))
             SocketService.sendToAllInGame(game.id, PlayersChanged())
             SocketService.sendToAllInGame(game.id, GameStateChanged(Game.State.EXPLAIN.name))
             call.respond(HttpStatusCode.OK, "started")

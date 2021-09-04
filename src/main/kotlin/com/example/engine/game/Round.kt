@@ -6,6 +6,8 @@ class Round (val number: Int, val sentence: Sentence) {
     private val _images: MutableMap<String, String> = mutableMapOf()
     val images:Map<String, String>
         get() = _images
+    var impostorKnowsFullSentence = false
+
     fun addImage(existingPlayerId: String, receive: String) {
         _images[existingPlayerId] = receive
     }

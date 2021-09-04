@@ -10,6 +10,7 @@ class Game(val id: String, val host: Player){
     var state: State = State.WAITING_TO_START
     var settings: GameSettings? = null
     val rounds: MutableList<Round> = mutableListOf()
+    var impostorActionsLeft: ImpostorActions? = null
 
     val playerList:List<Player>
         get() = _playerList.toList()
@@ -24,7 +25,6 @@ class Game(val id: String, val host: Player){
         }
         _playerList.add(player)
     }
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -102,6 +102,14 @@ class Game(val id: String, val host: Player){
         state = State.VOTE
         resetReady()
         SocketService.sendToAllInGame(id, GameStateChanged(State.VOTE.name))
+    }
+
+    fun start(settings: GameSettings) {
+        this.settings = settings
+        impostorActionsLeft = settings.impostorActions.copy()
+        state = State.EXPLAIN
+        resetForStart()
+        assignRoles()
     }
 
     enum class State {
