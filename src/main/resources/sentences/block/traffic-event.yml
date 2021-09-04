@@ -1,0 +1,8 @@
+id: traffic-event
+name: traffic event
+options:
+  - is standing in a traffic jam
+  - has an accident
+  - drives
+  - conks out
+  - has a race

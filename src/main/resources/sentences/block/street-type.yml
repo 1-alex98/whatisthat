@@ -1,0 +1,7 @@
+id: street-type
+name: street
+options:
+  - street
+  - highway
+  - dirt road
+  - car park

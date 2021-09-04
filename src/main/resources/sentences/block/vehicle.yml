@@ -1,0 +1,8 @@
+id: vehicle
+name: vehicle with four wheels
+options:
+  - car
+  - truck
+  - bus
+  - quad
+  - cement mixer

@@ -2,3 +2,5 @@ sentences:
   - {farm-animal} {take-vehicle} to {city}
   - {related-person} loves watching {ball-sport}
   - {social-group} I was {social-status} because I {crazy-action}
+  - {vehicle} {traffic-event} on {street-type}
+  - The {queen-adjective} queen {queen-action} and ate {strange-pie}
