@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
-import "./Timer.css"
-
+import styles from "./Timer.module.css"
 function Timer(props:{timerFinished: () => void; time:number|undefined}){
 
     const [counter, setCounter] = useState<number|null>(null);
@@ -19,9 +18,9 @@ function Timer(props:{timerFinished: () => void; time:number|undefined}){
     },[counter, props])
 
     return (
-        <div className="counter">
-            <div className="inner-counter">
-                <p>{counter?counter:''}</p>
+        <div className={styles.counter}>
+            <div className={styles.innerCounter}>
+                <p>{counter||''}</p>
             </div>
         </div>
     )

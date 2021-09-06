@@ -32,6 +32,7 @@ function image(value: DrawnImage) {
     return <Carousel.Item key={value.name}>
         <img
             src={value.dataUrl}
+            className="w-100 h-100 objectfit-conatin"
             alt="Image"
         />
         <Carousel.Caption>

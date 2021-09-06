@@ -108,7 +108,7 @@ private fun Route.review() {
             throw CustomStatusCodeException(403, "Must be impostor")
         }
         val existingGame = call.getExistingGame()
-        val impostorActions = existingGame.settings!!.impostorActions
+        val impostorActions = existingGame.impostorActionsLeft!!
         if (impostorActions.impostorHacking <= 0) {
             throw CustomStatusCodeException(403, "Already used up action")
         }
