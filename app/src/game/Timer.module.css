@@ -7,7 +7,7 @@
     animation:colorchange 20s infinite alternate;
 }
 
-.inner-counter {
+.innerCounter {
     height: 50px;
     width: 50px;
     text-align: center;
