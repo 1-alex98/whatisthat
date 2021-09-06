@@ -3,6 +3,7 @@ package com.example.routes.game
 import com.example.engine.game.Game
 import com.example.engine.store.getExistingGame
 import com.example.engine.store.getExistingPlayer
+import com.example.engine.store.isImpostor
 import com.example.routes.CustomStatusCodeException
 import com.example.routes.websocket.SocketService
 import com.example.routes.websocket.message.GameStateChanged
@@ -100,6 +101,23 @@ private fun Route.review() {
             ImageResponse(existingGame.getNameFromId(it.key), it.value)
         }.toSet()
         call.respond(images)
+    }
+
+    post("hack-crew-member") {
+        if (!call.isImpostor()) {
+            throw CustomStatusCodeException(403, "Must be impostor")
+        }
+        val existingGame = call.getExistingGame()
+        val impostorActions = existingGame.settings!!.impostorActions
+        if (impostorActions.impostorHacking <= 0) {
+            throw CustomStatusCodeException(403, "Already used up action")
+        }
+        impostorActions.impostorHacking = impostorActions.impostorHacking - 1
+        val currentRound = existingGame.rounds.last()
+        val playerName = call.receive<String>()
+        val id = existingGame.playerList.filter { it.name == playerName }.first().id
+        currentRound.hackedPlayerIdNextRound = id
+        call.respond(HttpStatusCode.Created)
     }
 }
 

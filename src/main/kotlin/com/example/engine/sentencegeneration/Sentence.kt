@@ -29,15 +29,31 @@ class Sentence (val template:Template){
     fun asStringHidden(): SentenceWithOptions {
         var sentenceString = template.raw
         selectedOptions.forEach {
-            val replacement =  if (it.key == hiddenBlock) "{${it.key.name}}" else it.value
+            val replacement = if (it.key == hiddenBlock) "{${it.key.name}}" else it.value
             sentenceString = sentenceString.replace(
                 "{${it.key.id}}", replacement
             )
         }
         return SentenceWithOptions(sentenceString, hiddenBlock.name, hiddenBlock.options)
     }
+
+    fun asHackedSentence(): String {
+        var sentenceString = template.raw
+        val hackedPart = selectedOptions.asIterable().toList().random()
+        selectedOptions.forEach {
+            if (it.key != hackedPart.key) {
+                sentenceString = sentenceString.replace(
+                    "{${it.key.id}}", it.value
+                )
+            } else {
+                sentenceString = sentenceString.replace(
+                    "{${it.key.id}}", it.key.options.filter { option -> option != it.value }.random()
+                )
+            }
+        }
+        return sentenceString
+    }
 }
 
 @Serializable
-data class SentenceWithOptions(val raw: String, val optionsName: String, val options: Set<String>) {
-}
+data class SentenceWithOptions(val raw: String, val optionsName: String, val options: Set<String>)

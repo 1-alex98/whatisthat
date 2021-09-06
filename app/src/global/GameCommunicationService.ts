@@ -166,13 +166,30 @@ export namespace GameCommunicationService{
                 }
             })
             .then(value => {
-                if(value.status !== 201) {
+                if (value.status !== 201) {
                     throw value.text()
                 }
             })
     }
 
-    export function getSentenceReview(): Promise<string>{
+    export function hackPlayerAsImpostor(playerName: string): Promise<void> {
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/hack-crew-member",
+            {
+                method: "POST",
+                body: playerName,
+                headers: {
+                    "Content-Type": "application/text"
+                }
+            })
+            .then(value => {
+                if (value.status !== 201) {
+                    throw value.text()
+                }
+            })
+    }
+
+    export function getSentenceReview(): Promise<string> {
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/sentence-review",
             {

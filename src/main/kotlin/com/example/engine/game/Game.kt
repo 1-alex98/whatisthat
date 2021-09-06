@@ -112,6 +112,13 @@ class Game(val id: String, val host: Player){
         assignRoles()
     }
 
+    fun penultimateRound(): Round? {
+        if (rounds.size <= 1) {
+            return null
+        }
+        return rounds[rounds.size - 2]
+    }
+
     enum class State {
         WAITING_TO_START,
         EXPLAIN,

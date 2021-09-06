@@ -20,8 +20,14 @@ fun Route.draw() {
             throw CustomStatusCodeException(403, "")
         }
         val existingGame = call.getExistingGame()
-        val last = existingGame.rounds.last()
-        call.respond(last.sentence.asStringComplete())
+        val playerId = call.getExistingPlayerId()
+        val penultimateRound = existingGame.penultimateRound()
+        val currentRound = existingGame.rounds.last()
+        if (penultimateRound?.hackedPlayerIdNextRound != playerId) {
+            call.respond(currentRound.sentence.asStringComplete())
+        } else {
+            call.respond(currentRound.sentence.asHackedSentence())
+        }
     }
 
     get("sentence-impostor") {

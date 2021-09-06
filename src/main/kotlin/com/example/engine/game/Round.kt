@@ -3,6 +3,7 @@ package com.example.engine.game
 import com.example.engine.sentencegeneration.Sentence
 
 class Round (val number: Int, val sentence: Sentence) {
+    var hackedPlayerIdNextRound: String? = null
     private val _images: MutableMap<String, String> = mutableMapOf()
     val images:Map<String, String>
         get() = _images
