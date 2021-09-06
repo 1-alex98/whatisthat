@@ -112,11 +112,13 @@ private fun Route.review() {
         if (impostorActions.impostorHacking <= 0) {
             throw CustomStatusCodeException(403, "Already used up action")
         }
-        impostorActions.impostorHacking = impostorActions.impostorHacking - 1
         val currentRound = existingGame.rounds.last()
         val playerName = call.receive<String>()
         val id = existingGame.playerList.filter { it.name == playerName }.first().id
-        currentRound.hackedPlayerIdNextRound = id
+        if (currentRound.hackedPlayerIdNextRound != id) {
+            currentRound.hackedPlayerIdNextRound = id
+            impostorActions.impostorHacking = impostorActions.impostorHacking - 1
+        }
         call.respond(HttpStatusCode.Created)
     }
 }

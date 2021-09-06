@@ -12,7 +12,9 @@ function fetchGameState(): Promise<string> {
 function redirectCorrectPage(state: string, history: History) {
     switch (state) {
         case "":
-            history.push("/")
+            if (!history.location.pathname.includes("join")) {
+                history.push("/")
+            }
             break;
         case "WAITING_TO_START":
             history.push("/lobby")

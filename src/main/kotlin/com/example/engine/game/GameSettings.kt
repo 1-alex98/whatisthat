@@ -7,6 +7,13 @@ class GameSettings(
     val secondsDiscussing: Int, impostorHacking: Int,
     impostorGetsCompleteSentence: Int
 ){
-    val impostorActions: ImpostorActions= ImpostorActions(impostorHacking, impostorGetsCompleteSentence);
-    constructor(startRequest: StartRequest) : this(startRequest.rounds, startRequest.drawTime, startRequest.reviewTime, startRequest.impostorHacking, startRequest.impostorGetsCompleteSentence)
+    val impostorActions: ImpostorActions = ImpostorActions(impostorHacking, impostorGetsCompleteSentence)
+
+    constructor(startRequest: StartRequest) : this(
+        startRequest.rounds,
+        startRequest.drawTime,
+        startRequest.reviewTime,
+        startRequest.impostorHacking,
+        startRequest.impostorGetsCompleteSentence
+    )
 }
