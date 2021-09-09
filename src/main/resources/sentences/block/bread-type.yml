@@ -1,5 +1,5 @@
-id: bread-spread
-name: bread spread from jar
+id: bread-type
+name: bread
 options:
   - toast
   - bread roll

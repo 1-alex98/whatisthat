@@ -1,5 +1,5 @@
-id: ball-sport
-name: ball-sport
+id: swimmer-type
+name: swimmer
 options:
   - child
   - olympia-swimmer
