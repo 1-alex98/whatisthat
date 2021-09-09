@@ -1,0 +1,7 @@
+id: bread-spread
+name: bread spread from jar
+options:
+  - jam
+  - marmalade
+  - peanut butter
+  - Nutella
