@@ -1,0 +1,7 @@
+id: waters
+name: waters
+options:
+  - sea
+  - lake
+  - river
+  - Mediterranean Sea
