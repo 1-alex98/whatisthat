@@ -1,7 +1,7 @@
 package com.example.engine.sentencegeneration
 
 class Template(val raw: String, allBlocks: Set<Block>) {
-    var usedBlocks: List<Block>;
+    var usedBlocks: List<Block>
 
     init {
         this.usedBlocks = parseBlocks(allBlocks)
@@ -12,6 +12,7 @@ class Template(val raw: String, allBlocks: Set<Block>) {
         return findAll.map { matchResult ->
             val identifier = matchResult.groupValues[1]
             allBlocks.find { it.id == identifier }
-        }.map { it!! }.toList()
+                ?: throw IllegalStateException("$identifier could not be found in blocks")
+        }.toList()
     }
 }
