@@ -62,21 +62,25 @@ fun Routing.lobby() {
         }
 
         post("join") {
-            val hostRequest = call.receive<JoinRequest>()
+            val joinRequest = call.receive<JoinRequest>()
             val oldGame = call.getGame()
-            if(oldGame != null){
+            if (oldGame != null) {
                 throw BadRequestException("Leave the old game before joining a new one")
             }
-            val game = GameStore.getInstance().getGame(hostRequest.gameId)
-            if(game == null) {
+            val game = GameStore.getInstance().getGame(joinRequest.gameId)
+            if (game == null) {
                 call.respond(HttpStatusCode.NotFound, "No such game was found")
                 return@post
             }
-            if(game.state != Game.State.WAITING_TO_START){
+            if (game.hasPlayer(joinRequest.playerName)) {
+                call.respond(HttpStatusCode.BadRequest, "This player name is already taken")
+                return@post
+            }
+            if (game.state != Game.State.WAITING_TO_START) {
                 call.respond(HttpStatusCode.BadRequest, "Game is a state that it can not be joined any longer")
                 return@post
             }
-            val playerId = joinGame(game, hostRequest)
+            val playerId = joinGame(game, joinRequest)
             call.sessions.set(GameSession(playerId, game.id))
             call.response.status(HttpStatusCode.Created)
             SocketService.sendToAllInGame(game.id, PlayersChanged())
@@ -85,7 +89,7 @@ fun Routing.lobby() {
         post("start") {
             val host = call.isHost()
             if(host == null || !host){
-                throw CustomStatusCodeException(403, "Can only start as host")
+                throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Can only start as host")
             }
             val game = call.getGame()
             game?: throw IllegalStateException()

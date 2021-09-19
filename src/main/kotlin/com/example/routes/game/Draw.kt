@@ -17,7 +17,7 @@ import io.ktor.routing.*
 fun Route.draw() {
     get("sentence-crew") {
         if (call.isImpostor()) {
-            throw CustomStatusCodeException(403, "")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Impostor only call")
         }
         val existingGame = call.getExistingGame()
         val playerId = call.getExistingPlayerId()
@@ -66,7 +66,7 @@ fun Route.draw() {
 
     get("full-sentence-impostor"){
         if(!call.isImpostor()){
-            throw CustomStatusCodeException(403, "Must be impostor")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Must be impostor")
         }
         val existingGame = call.getExistingGame()
         val currentRound = existingGame.rounds.last()
@@ -76,7 +76,7 @@ fun Route.draw() {
         }
         val impostorActionsLeft = existingGame.impostorActionsLeft!!
         if(impostorActionsLeft.impostorGetsCompleteSentence <=0){
-            throw CustomStatusCodeException(400, "Action already used up")
+            throw CustomStatusCodeException(HttpStatusCode.BadRequest, "Action already used up")
         }
         impostorActionsLeft.impostorGetsCompleteSentence = impostorActionsLeft.impostorGetsCompleteSentence - 1
         currentRound.impostorKnowsFullSentence = true
@@ -85,7 +85,7 @@ fun Route.draw() {
 
     get("full-sentence-impostor-active"){
         if(!call.isImpostor()){
-            throw CustomStatusCodeException(403, "Must be impostor")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Must be impostor")
         }
         val existingGame = call.getExistingGame()
         val currentRound = existingGame.rounds.last()

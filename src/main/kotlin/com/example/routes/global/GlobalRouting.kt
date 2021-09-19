@@ -34,7 +34,7 @@ fun Routing.global() {
 
         get("impostor-actions-left"){
             if(!call.isImpostor()){
-                throw CustomStatusCodeException(403, "Impostor only action")
+                throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Impostor only action")
             }
             val existingGame = call.getExistingGame()
             val impostorActions = existingGame.impostorActionsLeft!!

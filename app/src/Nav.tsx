@@ -3,38 +3,18 @@ import {useHistory} from "react-router-dom";
 import {WebsocketService} from "./global/WebsocketService";
 import {History} from "history";
 import {GlobalCommunicationService} from "./global/GlobalCommunicationService";
-import {NotifyService} from "./global/NotifyService";
+import {GameService} from "./global/GameService";
 
 function fetchGameState(): Promise<string> {
     return GlobalCommunicationService.gameState();
 }
 
+
 function redirectCorrectPage(state: string, history: History) {
-    switch (state) {
-        case "":
-            if (!history.location.pathname.includes("join")) {
-                history.push("/")
-            }
-            break;
-        case "WAITING_TO_START":
-            history.push("/lobby")
-            break;
-        case "EXPLAIN":
-            history.push("/explain")
-            break;
-        case "DRAW":
-            history.push("/draw")
-            break;
-        case "REVIEW":
-            history.push("/review")
-            break;
-        case "VOTE":
-            history.push("/vote")
-            break;
-        case "RESULT":
-            history.push("/result")
-            break;
+    if (history.location.pathname.includes("join")) {
+        return;
     }
+    GameService.redirectToCorrectPage(state, history);
 }
 
 function reconnect(history: History) {
@@ -49,10 +29,8 @@ function reconnect(history: History) {
 }
 
 function quit(history: History) {
-    WebsocketService.quit()
-    GlobalCommunicationService.quit()
+    GameService.quit()
         .then(_ => history.push("/"))
-        .catch(err=> NotifyService.warn(err, "Could not quit"))
 }
 
 function Nav() {

@@ -39,7 +39,7 @@ private fun Route.resultAndVote() {
         val receive = call.receive<String>()
         val existingPlayer = call.getExistingPlayer()
         if (existingPlayer.voted) {
-            throw CustomStatusCodeException(403, "Already voted")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Already voted")
         }
         existingPlayer.voted = true
         val find = existingGame.playerList.find { it.name == receive }
@@ -56,7 +56,7 @@ private fun Route.resultAndVote() {
     get("impostor") {
         val existingGame = call.getExistingGame()
         if (existingGame.state != Game.State.RESULT) {
-            throw CustomStatusCodeException(403, "Game must be finished")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Game must be finished")
         }
         call.respond(existingGame.playerList.find { it.role == "impostor" }!!.name)
     }
@@ -64,7 +64,7 @@ private fun Route.resultAndVote() {
     get("winner") {
         val existingGame = call.getExistingGame()
         if (existingGame.state != Game.State.RESULT) {
-            throw CustomStatusCodeException(403, "Game must be finished")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Game must be finished")
         }
         val maxVote = existingGame.playerList.maxOf { it.votedFor }
         val playersVoted = existingGame.playerList.filter { it.votedFor == maxVote }
@@ -84,7 +84,7 @@ private fun Route.review() {
     get("sentence-review") {
         val existingGame = call.getExistingGame()
         if (existingGame.state != Game.State.REVIEW) {
-            throw CustomStatusCodeException(403, "Can only be accessed in game state review")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Can only be accessed in game state review")
         }
         call.respond(existingGame.rounds.last().sentence.asStringComplete())
     }
@@ -105,12 +105,12 @@ private fun Route.review() {
 
     post("hack-crew-member") {
         if (!call.isImpostor()) {
-            throw CustomStatusCodeException(403, "Must be impostor")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Must be impostor")
         }
         val existingGame = call.getExistingGame()
         val impostorActions = existingGame.impostorActionsLeft!!
         if (impostorActions.impostorHacking <= 0) {
-            throw CustomStatusCodeException(403, "Already used up action")
+            throw CustomStatusCodeException(HttpStatusCode.Forbidden, "Already used up action")
         }
         val currentRound = existingGame.rounds.last()
         val playerName = call.receive<String>()

@@ -119,6 +119,10 @@ class Game(val id: String, val host: Player){
         return rounds[rounds.size - 2]
     }
 
+    fun hasPlayer(name: String): Boolean {
+        return playerList.any { it.name == name }
+    }
+
     enum class State {
         WAITING_TO_START,
         EXPLAIN,
