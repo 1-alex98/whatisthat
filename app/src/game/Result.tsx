@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
-import {VoteCommunicationService} from "../global/VoteCommunicationService";
+import {PlayerVoteData, VoteCommunicationService} from "../global/VoteCommunicationService";
 import {NotifyService} from "../global/NotifyService";
 import {LobbyCommunicationService} from "../global/LobbyCommunicationService";
 import {Button} from "react-bootstrap";
 import {GlobalCommunicationService} from "../global/GlobalCommunicationService";
 import {useHistory} from "react-router-dom";
 import {MessageIdentifiers, WebsocketService} from "../global/WebsocketService";
-import {Bar, BarChart, ResponsiveContainer, XAxis} from "recharts";
+import {Bar, BarChart, ResponsiveContainer, Tooltip, XAxis} from "recharts";
+import {GameService} from "../global/GameService";
 
 
 function fetchWinner(setWinner: (value: (((prevState: string) => string) | string)) => void) {
@@ -33,29 +34,19 @@ function restart() {
 }
 
 function ResultGraph() {
-    let [data, setData] = useState<any[]>([]);
+    let [data, setData] = useState<PlayerVoteData[]>([]);
 
     useEffect(() => {
-        setData([
-            {
-                name: 'Player A',
-                votes: 1
-            },
-            {
-                name: 'Player B',
-                votes: 2
-            },
-            {
-                name: 'Player C',
-                votes: 0
-            }
-        ])
+        VoteCommunicationService.getVoteData()
+            .then(data => setData(data))
+            .catch(reason => NotifyService.warn("Could not fetch how was voted how many times.", reason))
     }, [])
 
     return (
-        <ResponsiveContainer width="50%" height="50%" className="d-none">
+        <ResponsiveContainer width={800} height={400}>
             <BarChart width={150} height={40} data={data}>
-                <Bar dataKey="votes" fill="#0d6efd"/>
+                <Bar dataKey="votes" fill="#0d6efd" maxBarSize={50}/>
+                <Tooltip cursor={false}/>
                 <XAxis dataKey="name"/>
             </BarChart>
         </ResponsiveContainer>

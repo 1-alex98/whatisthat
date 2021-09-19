@@ -1,10 +1,29 @@
 import {Environment} from "./Environment";
 
 
+export interface PlayerVoteData {
+    name: string;
+    votes: number;
+}
+
 export namespace VoteCommunicationService{
     export function getPlayersToVote(): Promise<string[]>{
         let apiUrl = Environment.getApiUrl();
         return fetch(apiUrl + "/game/votable-players",
+            {
+                method: "GET"
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    throw value.text()
+                }
+                return value.json()
+            })
+    }
+
+    export function getVoteData(): Promise<PlayerVoteData[]>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/game/vote-data",
             {
                 method: "GET"
             })
