@@ -150,7 +150,7 @@ function Review() {
                 </Modal.Header>
                 <Modal.Body>{missingPlayers?.map(value => <p key={value}>{value}<br/></p>)}</Modal.Body>
             </Modal>
-            <Modal show={hackDialog}>
+            <Modal show={hackDialog} onHide={() => setHackDialog(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Selected player to be hacked</Modal.Title>
                 </Modal.Header>

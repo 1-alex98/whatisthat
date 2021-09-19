@@ -1,10 +1,10 @@
 .counter {
     border-radius: 50%;
-
+    display: inline-block;
     border-width: 6px;
     border-color: #d7cfcf;
     border-style: solid;
-    animation:colorchange 20s infinite alternate;
+    animation: colorchange 20s infinite alternate;
 }
 
 .innerCounter {
