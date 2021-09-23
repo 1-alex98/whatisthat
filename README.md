@@ -1,6 +1,6 @@
 # whatisthat
 
-A small Drawing game hosted at https://vontrostorff.de . Play with 3 players or more. Find out who is the impostor and does not know what he is drawing. Uses Ktor and React.
+A small Drawing game hosted at https://vontrostorff.de . Play the game with 3 players or more. Find the impostor that does not know what he is drawing. The app ses Ktor and React.
 
 # How to run locally
 
