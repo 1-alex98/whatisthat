@@ -51,7 +51,7 @@ function App() {
             </Route>
             <Route exact path="/">
               <Main/>
-              <p className="text-secondary">Alexander von Trostorff, Hellstraße 8, 53332 Bornheim. Website only intended for test usage.</p>
+              <p className="text-secondary">Website only intended for test usage.</p>
             </Route>
             <Route path="*">
               <p><span className="text-danger">404</span> we can not find what you are looking for.<br/> Somebody that does not know what he is doing must have coded this site.</p>
