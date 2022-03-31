@@ -67,7 +67,22 @@ function Explain(){
             </div>
             <div>
                 <h3>How the game works</h3>
-                <p>Lorem ipsum bla bla bla rounds:  <span className="text-primary">{rounds}</span></p>
+                <p>You will play rounds <span className="text-primary">{rounds}</span></p>
+                <p>Every round you need to draw the sentence given to you. After every round you see everyone's drawing.</p>
+                {role =="impostor"&&
+                    <div>
+                        <p>Since you are the impostor you will see a <q>?</q> as a replacement for a part of the sentence. Hover over it to see possible outcomes.</p>
+                        <p>1 time in the game you can see the whole sentence by clicking the corresponding button.</p>
+                        <p>1 time you can make crew-mates get the wrong sentence to denounce him. Hack the crew-mate with the correspoding option while reviewing images.</p>
+                        <p>You job is to draw as inaccurate on the part of the sentence you don't know. If somebody suspects you, say you are a <q>bad drawer</q> and never admit being the impostor. You can also blame the impostor for hacking you.</p>
+                    </div>
+                }
+                {role !="impostor"&&
+                    <div>
+                        <p>You job is to draw as accurate as possible. Try finding out who does not know what he needs to draw and vote him at the end of the game.</p>
+                        <p>You can be hacked and given a wrong sentence, be aware. You will always see the correct sentence while reviewing the drawings.</p>
+                    </div>
+                }
             </div>
             <div>
                 <Button variant="primary" onClick={event => readyUp(setReady)} disabled={ready}>
