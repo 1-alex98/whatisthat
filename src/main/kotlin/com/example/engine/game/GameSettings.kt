@@ -1,6 +1,6 @@
 package com.example.engine.game
 
-import com.example.routes.lobby.StartRequest
+import com.example.routes.lobby.SettingsRequest
 
 class GameSettings(
     val rounds: Int, val secondsDrawing: Int,
@@ -9,7 +9,7 @@ class GameSettings(
 ){
     val impostorActions: ImpostorActions = ImpostorActions(impostorHacking, impostorGetsCompleteSentence)
 
-    constructor(startRequest: StartRequest) : this(
+    constructor(startRequest: SettingsRequest) : this(
         startRequest.rounds,
         startRequest.drawTime,
         startRequest.reviewTime,

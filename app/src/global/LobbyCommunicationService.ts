@@ -8,6 +8,14 @@ export interface Player {
     me:boolean,
 }
 
+export interface GameSettings {
+    rounds: number,
+    secondsDrawing: number,
+    secondsDiscussing: number,
+    impostorHacking: number,
+    impostorGetsCompleteSentence: number
+}
+
 export namespace LobbyCommunicationService{
     export function hostGame(name: string): Promise<string>{
         let apiUrl = Environment.getApiUrl();
@@ -28,6 +36,29 @@ export namespace LobbyCommunicationService{
                 return value.text()
             })
     }
+    export function sendSettings(rounds: number, drawTime: number, reviewTime: number, impostorHacking: number, impostorGetsCompleteSentence: number): Promise<void>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/lobby/settings",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    rounds: rounds,
+                    drawTime: drawTime,
+                    reviewTime: reviewTime,
+                    impostorHacking: impostorHacking,
+                    impostorGetsCompleteSentence: impostorGetsCompleteSentence,
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(value => {
+                if(value.status !== 201) {
+                    throw value.text()
+                }
+                return
+            })
+    }
 
     export function players(): Promise<Player[]>{
         let apiUrl = Environment.getApiUrl();
@@ -41,6 +72,23 @@ export namespace LobbyCommunicationService{
             .then(value => {
                 if(value.status !== 200) {
                     throw value.text()
+                }
+                return value.json()
+            })
+    }
+
+    export function getSettings(): Promise<GameSettings|null>{
+        let apiUrl = Environment.getApiUrl();
+        return fetch(apiUrl + "/lobby/settings",
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(value => {
+                if(value.status !== 200) {
+                    return null;
                 }
                 return value.json()
             })

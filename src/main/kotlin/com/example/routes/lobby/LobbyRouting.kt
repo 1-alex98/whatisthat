@@ -86,6 +86,21 @@ fun Routing.lobby() {
             SocketService.sendToAllInGame(game.id, PlayersChanged())
         }
 
+        post("settings") {
+            val game = call.getGame()
+            game?: throw IllegalStateException()
+            val startRequest = call.receive<SettingsRequest>()
+            game.settings = GameSettings(startRequest)
+            SocketService.sendToAllInGame(game.id, GameStateChanged(Game.State.EXPLAIN.name))
+        }
+
+        get("settings") {
+            val game = call.getGame()
+            game?: throw IllegalStateException()
+            game.settings?: throw CustomStatusCodeException(HttpStatusCode.NotFound, "No settings yet")
+            call.respond(GameSettingsAnswer(game.settings!!))
+        }
+
         post("start") {
             val host = call.isHost()
             if(host == null || !host){
@@ -93,7 +108,7 @@ fun Routing.lobby() {
             }
             val game = call.getGame()
             game?: throw IllegalStateException()
-            val startRequest = call.receive<StartRequest>()
+            val startRequest = call.receive<SettingsRequest>()
             game.start(GameSettings(startRequest))
             SocketService.sendToAllInGame(game.id, PlayersChanged())
             SocketService.sendToAllInGame(game.id, GameStateChanged(Game.State.EXPLAIN.name))

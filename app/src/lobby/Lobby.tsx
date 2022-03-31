@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Button, Card, Form} from "react-bootstrap";
-import {LobbyCommunicationService, Player} from "../global/LobbyCommunicationService";
+import {GameSettings, LobbyCommunicationService, Player} from "../global/LobbyCommunicationService";
 import {NotifyService} from "../global/NotifyService";
 import copy from 'copy-to-clipboard';
 import "./Lobby.css"
@@ -43,8 +43,32 @@ function startGame(rounds: number, drawTime: number, reviewTime: number, imposto
         .catch(reason => NotifyService.warn(reason, "Game could not be started"))
 }
 
+function fetchSettings(setSettings: React.Dispatch<React.SetStateAction<GameSettings | null>>) {
+    LobbyCommunicationService.getSettings()
+        .then(settings => {
+            setSettings(settings)
+        })
+        .catch(reason => {
+            NotifyService.warn(reason, "Could not fetch settings");
+        })
+}
+
+function sendSettings(rounds: number, drawTime: number, reviewTime: number, impostorHacking: number, impostorGetsCompleteSentence: number) {
+    LobbyCommunicationService.sendSettings(
+        rounds,
+        drawTime,
+        reviewTime,
+        impostorHacking,
+        impostorGetsCompleteSentence
+    ).then(_ => {})
+        .catch(reason => {
+            NotifyService.warn(reason, "Could not update settings");
+        })
+}
+
 function Settings() {
     let [host, setHost] = useState(false);
+    let [settings, setSettings] = useState<null|GameSettings>(null);
     let [rounds, setRounds] = useState(6);
     let [drawTime, setDrawTime] = useState(70);
     let [reviewTime, setReviewTime] = useState(90);
@@ -53,9 +77,14 @@ function Settings() {
     useEffect(() => {
         fetchIsHost(setHost)
     },[])
+    useEffect(() => {
+        if(!host){
+            fetchSettings(setSettings)
+        }
+    },[host])
 
 
-    return (<div className="m-2 flex-column align-items-center settings-div" hidden={!host}>
+    return (<div className="m-2 flex-column align-items-center settings-div">
         <Card
             bg={"light"}
             key="settings"
@@ -69,17 +98,25 @@ function Settings() {
             </Card.Title>
             <Card.Body>
 
-                <Form>
+                <Form onChange={_ => sendSettings(rounds, drawTime, reviewTime, impostorHacking, impostorGetsCompleteSentence)}>
                     <Form.Label>Rounds:{rounds}</Form.Label>
-                    <Form.Range min={2} max={10} defaultValue={6} onChange={event => setRounds(Number(event.target.value))}/>
+                    {
+                        (host || !settings) &&
+                        <Form.Range disabled={!host} min={2} max={10} defaultValue={6}
+                                    onChange={event => setRounds(Number(event.target.value))}/>
+                    }
+                    {
+                        !host && settings &&
+                        <Form.Range value={settings.rounds} disabled={!host} min={2} max={10} defaultValue={6} onChange={event => setRounds(Number(event.target.value))}/>
+                    }
                     <Form.Label>Draw time in seconds:{drawTime}</Form.Label>
-                    <Form.Range min={10} max={200} defaultValue={70} onChange={event => setDrawTime(Number(event.target.value))}/>
+                    <Form.Range disabled={!host} min={10} max={200} defaultValue={70} onChange={event => setDrawTime(Number(event.target.value))}/>
                     <Form.Label>Review time in seconds:{reviewTime}</Form.Label>
-                    <Form.Range min={10} max={200} defaultValue={90} onChange={event => setReviewTime(Number(event.target.value))}/>
+                    <Form.Range disabled={!host} min={10} max={200} defaultValue={90} onChange={event => setReviewTime(Number(event.target.value))}/>
                     <Form.Label>Times impostor can hack:{impostorHacking}</Form.Label>
-                    <Form.Range min={0} max={4} defaultValue={1} onChange={event => setImpostorHacking(Number(event.target.value))}/>
+                    <Form.Range disabled={!host} min={0} max={4} defaultValue={1} onChange={event => setImpostorHacking(Number(event.target.value))}/>
                     <Form.Label>Times impostor gets correct sentence:{impostorGetsCompleteSentence}</Form.Label>
-                    <Form.Range min={0} max={4} defaultValue={1} onChange={event => setImpostorGetsCompleteSentence(Number(event.target.value))}/>
+                    <Form.Range disabled={!host} min={0} max={4} defaultValue={1} onChange={event => setImpostorGetsCompleteSentence(Number(event.target.value))}/>
                 </Form>
             </Card.Body>
         </Card>
