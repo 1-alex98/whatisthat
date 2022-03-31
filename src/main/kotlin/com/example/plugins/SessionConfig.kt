@@ -11,6 +11,7 @@ fun Application.configureSession() {
     install(Sessions) {
         cookie<GameSession>("GAME_SESSION", storage = SessionStorageMemory()){
             cookie.extensions["SameSite"] = "strict"
+            cookie.maxAgeInSeconds = 60 * 60 * 24* 60
         }
     }
 }
