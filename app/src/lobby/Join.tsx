@@ -65,7 +65,11 @@ function Join() {
                 <h2>Join a game</h2>
             </div>
             <div className="row justify-content-center">
-                <Form className="w-50">
+                <Form className="w-50" onSubmit={event => {
+                    event.stopPropagation()
+                    event.preventDefault()
+                    onSubmit(name, setLoading, history, gameId)
+                }}>
                     <Form.Group className="mb-3" controlId="hostForm">
                         <Form.Label>Your player name</Form.Label>
                         {nameError &&
