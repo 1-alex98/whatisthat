@@ -13,6 +13,7 @@ function calculateCounter(setCounter: (value: (((prevState: (number | null)) => 
 function Timer(props: { timerFinished: () => void; time: number | undefined }) {
 
     const [counter, setCounter] = useState<number | null>(null);
+    const [finished, setFinished] = useState(false);
     const [stopped, setStopped] = useState(false);
     let startTime = useRef<number>();
     useEffect(() => {
@@ -26,9 +27,12 @@ function Timer(props: { timerFinished: () => void; time: number | undefined }) {
         }
     }, [props, counter])
     useEffect(() => {
-        if (counter != null && counter <= 0)
+        if (counter != null && counter <= 0 && !finished){
             props.timerFinished()
-    },[counter, props])
+            setFinished(true)
+        }
+
+    },[counter, props, finished])
 
     return (
         <div>

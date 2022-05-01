@@ -118,6 +118,9 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
         let lastElement = elements[elements.length - 1];
         // add point
         addPointToLine(lastElement, point, elements, setElements);
+        e.evt.preventDefault();
+        e.evt.stopPropagation();
+        return false;
     }
 
     function handleMouseUp(e: any){
@@ -140,10 +143,13 @@ function FreeDrawCanvas(props: {drawTime:number|null, uploaded: ()=>void}){
                     <Timer timerFinished={uploadImage(stageRef, props.uploaded)} time={timeout}/>
                 </div>
             </div>
-            <div className="card flex-grow-1" ref={divRef}>
+            <div className="card flex-grow-1" ref={divRef} >
                 <Stage
                     width={dimension.w}
                     height={dimension.h}
+                    onTouchStart={handleMouseDown}
+                    onTouchMove={handleMouseMove}
+                    onTouchEnd={handleMouseUp}
                     onMouseDown={handleMouseDown}
                     onMousemove={handleMouseMove}
                     onMouseup={handleMouseUp}
