@@ -59,6 +59,7 @@ class Game(val id: String, val host: Player){
         val resetPlayers = _playerList.map { Player(it.name, it.id, it.host, it.connected) }
         _playerList.clear()
         _playerList.addAll(resetPlayers)
+        assignRoles()
         state = State.WAITING_TO_START
         SocketService.sendToAllInGame(id, GameStateChanged(State.WAITING_TO_START.name))
     }
